@@ -27,6 +27,10 @@ export default function AdminDashboardPage() {
   const [editingProductId, setEditingProductId] = useState(null);
   const [editProductForm, setEditProductForm] = useState({ name: '', category: '', description: '', price: '', image: '', status: '' });
 
+  // Editing user states
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editUserForm, setEditUserForm] = useState({ name: '', phone: '', profile_photo: '', role: '' });
+
   useEffect(() => {
     if (isAdmin) {
       if (activeTab === 'orders') fetchOrders();
@@ -110,6 +114,30 @@ export default function AdminDashboardPage() {
       const { error } = await supabase.rpc('delete_user_admin', { target_user_id: userId });
       if (error) throw error;
       setUsers(users.filter(u => u.id !== userId));
+    } catch (err) { alert(`Error: ${err.message}`); }
+  };
+
+  const handleEditUser = (profile) => {
+    setEditingUserId(profile.id);
+    setEditUserForm({
+      name: profile.name || '',
+      phone: profile.phone || '',
+      profile_photo: profile.profile_photo || '',
+      role: profile.role || 'customer'
+    });
+  };
+
+  const saveEditedUser = async () => {
+    try {
+      const { error } = await supabase.from('profiles').update({
+        name: editUserForm.name,
+        phone: editUserForm.phone,
+        profile_photo: editUserForm.profile_photo,
+        role: editUserForm.role
+      }).eq('id', editingUserId);
+      if (error) throw error;
+      setEditingUserId(null);
+      fetchUsers();
     } catch (err) { alert(`Error: ${err.message}`); }
   };
 
@@ -329,9 +357,17 @@ export default function AdminDashboardPage() {
                                   <td>{new Date(profile.created_at).toLocaleDateString()}</td>
                                   <td>
                                     <button 
+                                      className="btn btn-outline-primary btn-sm me-2" 
+                                      onClick={() => handleEditUser(profile)}
+                                      title="Edit User"
+                                    >
+                                      <i className="bi bi-pencil"></i>
+                                    </button>
+                                    <button 
                                       className="btn btn-outline-danger btn-sm" 
                                       onClick={() => deleteUser(profile.id)}
                                       disabled={profile.id === user.id} // Don't delete self
+                                      title="Delete User"
                                     >
                                       <i className="bi bi-trash"></i>
                                     </button>
@@ -499,6 +535,51 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Edit User Modal */}
+      {editingUserId && (
+        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50" style={{ zIndex: 1050 }}>
+          <div className="card shadow-lg border-0 w-100 mx-3" style={{ maxWidth: '500px' }}>
+            <div className="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+              <h5 className="fw-bold mb-0">Edit User Profile</h5>
+              <button className="btn-close" onClick={() => setEditingUserId(null)}></button>
+            </div>
+            <div className="card-body p-4">
+              <div className="row g-3">
+                <div className="col-12">
+                  <label className="form-label small fw-bold mb-1">Full Name</label>
+                  <input type="text" className="form-control form-control-sm" value={editUserForm.name} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label small fw-bold mb-1">Phone Number</label>
+                  <input type="text" className="form-control form-control-sm" value={editUserForm.phone} onChange={e => setEditUserForm({...editUserForm, phone: e.target.value})} />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label small fw-bold mb-1">Role</label>
+                  <select 
+                    className="form-select form-select-sm" 
+                    value={editUserForm.role} 
+                    onChange={e => setEditUserForm({...editUserForm, role: e.target.value})}
+                    disabled={editingUserId === user.id}
+                  >
+                    <option value="customer">Customer</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="col-12">
+                  <label className="form-label small fw-bold mb-1">Profile Photo URL</label>
+                  <input type="text" className="form-control form-control-sm" value={editUserForm.profile_photo} onChange={e => setEditUserForm({...editUserForm, profile_photo: e.target.value})} />
+                </div>
+              </div>
+            </div>
+            <div className="card-footer bg-light border-top-0 py-3 text-end">
+              <button className="btn btn-secondary btn-sm me-2 px-4" onClick={() => setEditingUserId(null)}>Cancel</button>
+              <button className="btn btn-success btn-sm px-4" onClick={saveEditedUser}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
