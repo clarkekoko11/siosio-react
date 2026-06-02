@@ -394,7 +394,6 @@ export default function AdminDashboardPage() {
                             </thead>
                             <tbody>
                               {products.map(product => (
-                                editingProductId === product.id ? (
                                 <tr key={product.id}>
                                   <td>
                                     <div className="d-flex align-items-center">
