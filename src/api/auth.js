@@ -1,8 +1,7 @@
-// WARNING: This is a legacy custom API endpoint.
-// It is no longer in use, but was discovered during our pentest.
+
 
 import express from 'express';
-import { db } from './database-connection'; 
+import { db } from './database-connection';
 
 const router = express.Router();
 
@@ -14,7 +13,7 @@ router.post('/login', async (req, res) => {
     // VULNERABILITY FOUND HERE: 
     // The developer used template literals to directly concatenate 
     // user input into the SQL query without sanitization or parameterization.
-    
+
     const rawQuery = `
       SELECT * FROM public.profiles 
       WHERE email = '${email}' 
@@ -32,7 +31,7 @@ router.post('/login', async (req, res) => {
       // Login failed
       res.status(401).json({ success: false, message: "Invalid credentials" });
     }
-    
+
   } catch (error) {
     res.status(500).json({ error: "Database error querying schema" });
   }
