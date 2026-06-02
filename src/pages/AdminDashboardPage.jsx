@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin } = useContext(AuthContext);
@@ -87,13 +88,32 @@ export default function AdminDashboardPage() {
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
-      const { data, error } = await supabase.rpc('create_user_admin', {
-        new_email: newUserEmail,
-        new_password: newUserPassword,
-        new_name: newUserName,
-        new_role: newUserRole
+      // Use a temporary client without session persistence to create the user via GoTrue
+      // This avoids manual SQL inserts into auth.users and prevents the "Database error querying schema"
+      const tempClient = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        { auth: { persistSession: false, autoRefreshToken: false } }
+      );
+
+      const { data, error } = await tempClient.auth.signUp({
+        email: newUserEmail,
+        password: newUserPassword,
+        options: {
+          data: { full_name: newUserName }
+        }
       });
       if (error) throw error;
+      
+      // Wait a moment for the database trigger to insert the public.profiles record
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Now use our main authenticated admin client to set their role
+      if (data?.user?.id) {
+        const { error: roleError } = await supabase.from('profiles').update({ role: newUserRole }).eq('id', data.user.id);
+        if (roleError) console.error("Failed to set role:", roleError);
+      }
+
       alert("User created successfully!");
       setNewUserEmail(''); setNewUserPassword(''); setNewUserName('');
       fetchUsers();
