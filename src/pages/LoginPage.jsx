@@ -33,7 +33,7 @@ export default function LoginPage() {
         const fullname = `${fname} ${mname} ${lname}`.replace(/\s+/g, ' ').trim();
         const username = `${fname}${lname}`.toLowerCase();
         
-        const { error: signUpError } = await signUp(email, password, {
+        const { data, error: signUpError } = await signUp(email, password, {
           data: {
             full_name: fullname,
             username: username
@@ -41,8 +41,14 @@ export default function LoginPage() {
         });
         
         if (signUpError) throw signUpError;
-        // Supabase sends email verification automatically
-        navigate('/verify', { state: { email } });
+        
+        // If email confirmation is disabled in Supabase, a session is returned immediately
+        if (data?.session) {
+          navigate('/');
+        } else {
+          // Otherwise, redirect to verify page
+          navigate('/verify', { state: { email } });
+        }
       }
     } catch (err) {
       setError(err.message || 'An error occurred.');
