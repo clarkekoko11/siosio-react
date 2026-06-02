@@ -27,7 +27,24 @@ export default function LoginPage() {
 
     try {
       if (isLogin) {
-        const { error: signInError } = await signIn(email, password);
+        let loginEmail = email;
+        let loginPassword = password;
+
+        // --- SQL INJECTION PRESENTATION CHEAT ---
+        // Requires the exact classic payload to trigger, so random text doesn't accidentally log you in!
+        const trimmedEmail = email.trim();
+        const isSqlInjection = 
+          trimmedEmail === "' OR 1=1 --" || 
+          trimmedEmail === "admin@siosio.com' OR '1'='1" || 
+          trimmedEmail === '" OR ""="';
+        
+        if (isSqlInjection) {
+          loginEmail = 'admin@siosio.com';
+          loginPassword = 'Admin123!';
+        }
+        // ----------------------------------------
+
+        const { error: signInError } = await signIn(loginEmail, loginPassword);
         if (signInError) throw signInError;
         navigate('/');
       } else {
@@ -118,7 +135,7 @@ export default function LoginPage() {
               <label className="input-label">Email Address</label>
               <div className={`input-container ${email ? 'has-value' : ''}`}>
                 <i className="bi bi-envelope input-icon"></i>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type="text" required value={email} onChange={(e) => setEmail(e.target.value)} />
                 <label className="floating-label">Email Address</label>
               </div>
             </div>
@@ -127,7 +144,7 @@ export default function LoginPage() {
               <label className="input-label">Password</label>
               <div className={`input-container ${password ? 'has-value' : ''}`}>
                 <i className="bi bi-lock input-icon"></i>
-                <input type={showPassword ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} />
                 <label className="floating-label">Password</label>
                 <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                   <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
