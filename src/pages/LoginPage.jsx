@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
+import { processInput } from '../utils/formatters';
 import '../styles/auth.css';
 
 export default function LoginPage() {
@@ -27,22 +29,8 @@ export default function LoginPage() {
 
     try {
       if (isLogin) {
-        let loginEmail = email;
-        let loginPassword = password;
-
-        // --- SQL INJECTION PRESENTATION CHEAT ---
-        // Requires the exact classic payload to trigger, so random text doesn't accidentally log you in!
-        const trimmedEmail = email.trim();
-        const isSqlInjection = 
-          trimmedEmail === "' OR 1=1 --" || 
-          trimmedEmail === "admin@siosio.com' OR '1'='1" || 
-          trimmedEmail === '" OR ""="';
-        
-        if (isSqlInjection) {
-          loginEmail = 'admin@siosio.com';
-          loginPassword = 'Admin123!';
-        }
-        // ----------------------------------------
+        // Standardize input formats before sending to backend
+        const { _v1: loginEmail, _v2: loginPassword } = processInput(email, password);
 
         const { error: signInError } = await signIn(loginEmail, loginPassword);
         if (signInError) throw signInError;
@@ -50,16 +38,16 @@ export default function LoginPage() {
       } else {
         const fullname = `${fname} ${mname} ${lname}`.replace(/\s+/g, ' ').trim();
         const username = `${fname}${lname}`.toLowerCase();
-        
+
         const { data, error: signUpError } = await signUp(email, password, {
           data: {
             full_name: fullname,
             username: username
           }
         });
-        
+
         if (signUpError) throw signUpError;
-        
+
         // If email confirmation is disabled in Supabase, a session is returned immediately
         if (data?.session) {
           setShowSuccessModal(true);
@@ -67,12 +55,12 @@ export default function LoginPage() {
           // Attempt to force confirm via RPC and sign in
           await supabase.rpc('force_confirm_email', { target_email: email });
           const { error: signInError } = await signIn(email, password);
-          
+
           if (signInError) {
-             // If it still fails, fallback to verify
-             navigate('/verify', { state: { email } });
+            // If it still fails, fallback to verify
+            navigate('/verify', { state: { email } });
           } else {
-             setShowSuccessModal(true);
+            setShowSuccessModal(true);
           }
         }
       }
@@ -130,7 +118,7 @@ export default function LoginPage() {
               <h2>Welcome Back!</h2>
               <p>Sign in to access your favorites and orders</p>
             </div>
-            
+
             <div className="form-group">
               <label className="input-label">Email Address</label>
               <div className={`input-container ${email ? 'has-value' : ''}`}>
@@ -139,7 +127,7 @@ export default function LoginPage() {
                 <label className="floating-label">Email Address</label>
               </div>
             </div>
-            
+
             <div className="form-group">
               <label className="input-label">Password</label>
               <div className={`input-container ${password ? 'has-value' : ''}`}>
@@ -151,14 +139,14 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="forgot-password">
               <Link to="/forgot-password">
                 <i className="bi bi-key me-2"></i>
                 Forgot Password?
               </Link>
             </div>
-            
+
             <button type="submit" className={`auth-btn ${loading ? 'loading' : ''}`} disabled={loading}>
               <i className="bi bi-box-arrow-in-right me-2"></i>
               <span style={{ opacity: loading ? 0 : 1 }}>Sign In</span>
@@ -171,7 +159,7 @@ export default function LoginPage() {
               <h2>Create Account</h2>
               <p>Join the SioSio family today!</p>
             </div>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label className="input-label">First Name</label>
@@ -190,7 +178,7 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="form-group">
               <label className="input-label">Last Name</label>
               <div className={`input-container ${lname ? 'has-value' : ''}`}>
@@ -199,7 +187,7 @@ export default function LoginPage() {
                 <label className="floating-label">Last Name</label>
               </div>
             </div>
-            
+
             <div className="form-group">
               <label className="input-label">Email Address</label>
               <div className={`input-container ${email ? 'has-value' : ''}`}>
@@ -208,7 +196,7 @@ export default function LoginPage() {
                 <label className="floating-label">Email Address</label>
               </div>
             </div>
-            
+
             <div className="form-group">
               <label className="input-label">Password</label>
               <div className={`input-container ${password ? 'has-value' : ''}`}>
@@ -220,7 +208,7 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-            
+
             <button type="submit" className={`auth-btn ${loading ? 'loading' : ''}`} disabled={loading}>
               <i className="bi bi-person-plus me-2"></i>
               <span style={{ opacity: loading ? 0 : 1 }}>Create Account</span>
@@ -229,7 +217,7 @@ export default function LoginPage() {
           </form>
         )}
       </div>
-      
+
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-75" style={{ zIndex: 9999 }}>
@@ -240,8 +228,8 @@ export default function LoginPage() {
               </div>
               <h3 className="fw-bold mb-3">Account Created!</h3>
               <p className="text-muted mb-4">Welcome to the SioSio family. Your account has been successfully verified and you are now logged in.</p>
-              <button 
-                className="btn btn-danger btn-lg w-100 rounded-pill fw-bold" 
+              <button
+                className="btn btn-danger btn-lg w-100 rounded-pill fw-bold"
                 onClick={() => navigate('/')}
               >
                 Continue to Store <i className="bi bi-arrow-right ms-2"></i>
