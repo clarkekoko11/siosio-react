@@ -183,7 +183,8 @@ export default function ProfilePage() {
                               <small className="text-muted d-block">Status</small>
                               <span className={`badge ${
                                 order.status === 'pending' ? 'bg-warning text-dark' : 
-                                order.status === 'cancelled' ? 'bg-danger' : 'bg-success'
+                                order.status === 'delivered' ? 'bg-success' : 
+                                order.status === 'cancelled' ? 'bg-danger' : 'bg-primary'
                               }`}>
                                 {order.status.toUpperCase()}
                               </span>

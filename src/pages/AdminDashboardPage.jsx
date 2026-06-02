@@ -300,7 +300,7 @@ export default function AdminDashboardPage() {
                                   <td><strong className="text-danger">₱{order.total_amount.toFixed(2)}</strong></td>
                                   <td>
                                     <select 
-                                      className={`form-select form-select-sm fw-bold ${order.status === 'pending' ? 'text-warning' : order.status === 'delivered' ? 'text-success' : order.status === 'cancelled' ? 'text-danger' : 'text-primary'}`}
+                                      className={`form-select form-select-sm fw-bold ${order.status === 'pending' ? 'bg-warning text-dark border-warning' : order.status === 'delivered' ? 'bg-success text-white border-success' : order.status === 'cancelled' ? 'bg-danger text-white border-danger' : 'bg-primary text-white border-primary'}`}
                                       value={order.status}
                                       onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                                     >
