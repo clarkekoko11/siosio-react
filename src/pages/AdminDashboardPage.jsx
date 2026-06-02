@@ -108,9 +108,15 @@ export default function AdminDashboardPage() {
       // Wait a moment for the database trigger to insert the public.profiles record
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Now use our main authenticated admin client to set their role
+      // Now use our RPC to set their role, bypassing RLS
       if (data?.user?.id) {
-        const { error: roleError } = await supabase.from('profiles').update({ role: newUserRole }).eq('id', data.user.id);
+        const { error: roleError } = await supabase.rpc('update_user_admin', {
+          target_user_id: data.user.id,
+          new_name: null,
+          new_phone: null,
+          new_role: newUserRole,
+          new_photo: null
+        });
         if (roleError) console.error("Failed to set role:", roleError);
       }
 
@@ -122,7 +128,13 @@ export default function AdminDashboardPage() {
 
   const updateUserRole = async (userId, newRole) => {
     try {
-      const { error } = await supabase.from('profiles').update({ role: newRole }).eq('id', userId);
+      const { error } = await supabase.rpc('update_user_admin', {
+        target_user_id: userId,
+        new_name: null,
+        new_phone: null,
+        new_role: newRole,
+        new_photo: null
+      });
       if (error) throw error;
       setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
     } catch (err) { alert(`Error: ${err.message}`); }
@@ -149,12 +161,13 @@ export default function AdminDashboardPage() {
 
   const saveEditedUser = async () => {
     try {
-      const { error } = await supabase.from('profiles').update({
-        name: editUserForm.name,
-        phone: editUserForm.phone,
-        profile_photo: editUserForm.profile_photo,
-        role: editUserForm.role
-      }).eq('id', editingUserId);
+      const { error } = await supabase.rpc('update_user_admin', {
+        target_user_id: editingUserId,
+        new_name: editUserForm.name,
+        new_phone: editUserForm.phone,
+        new_role: editUserForm.role,
+        new_photo: editUserForm.profile_photo
+      });
       if (error) throw error;
       setEditingUserId(null);
       fetchUsers();
