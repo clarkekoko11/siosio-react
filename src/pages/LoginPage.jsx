@@ -7,6 +7,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { signIn, signUp } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -44,10 +45,18 @@ export default function LoginPage() {
         
         // If email confirmation is disabled in Supabase, a session is returned immediately
         if (data?.session) {
-          navigate('/');
+          setShowSuccessModal(true);
         } else {
-          // Otherwise, redirect to verify page
-          navigate('/verify', { state: { email } });
+          // Attempt to force confirm via RPC and sign in
+          await supabase.rpc('force_confirm_email', { target_email: email });
+          const { error: signInError } = await signIn(email, password);
+          
+          if (signInError) {
+             // If it still fails, fallback to verify
+             navigate('/verify', { state: { email } });
+          } else {
+             setShowSuccessModal(true);
+          }
         }
       }
     } catch (err) {
@@ -203,6 +212,27 @@ export default function LoginPage() {
           </form>
         )}
       </div>
+      
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-75" style={{ zIndex: 9999 }}>
+          <div className="card shadow-lg border-0 text-center p-4 animate__animated animate__zoomIn" style={{ maxWidth: '400px', borderRadius: '1rem' }}>
+            <div className="card-body">
+              <div className="mb-4">
+                <i className="bi bi-check-circle-fill text-success" style={{ fontSize: '4rem' }}></i>
+              </div>
+              <h3 className="fw-bold mb-3">Account Created!</h3>
+              <p className="text-muted mb-4">Welcome to the SioSio family. Your account has been successfully verified and you are now logged in.</p>
+              <button 
+                className="btn btn-danger btn-lg w-100 rounded-pill fw-bold" 
+                onClick={() => navigate('/')}
+              >
+                Continue to Store <i className="bi bi-arrow-right ms-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
