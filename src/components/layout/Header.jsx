@@ -5,7 +5,7 @@ import { CartContext } from '../../contexts/CartContext';
 import '../../styles/headfoot.css';
 
 export default function Header() {
-  const { user, profile, signOut } = useContext(AuthContext);
+  const { user, profile, isAdmin, signOut } = useContext(AuthContext);
   const { cartCount } = useContext(CartContext);
   const navigate = useNavigate();
 
@@ -82,7 +82,13 @@ export default function Header() {
                     <a href="#" className="btn btn-outline-light rounded-circle hover-scale" data-bs-toggle="dropdown" aria-expanded="false" role="button">
                       <i className="bi bi-person-fill"></i>
                     </a>
-                    <ul className="dropdown-menu dropdown-menu-end shadow">
+                    <ul className="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                      {isAdmin && (
+                        <>
+                          <li><Link className="dropdown-item" to="/admin"><i className="bi bi-speedometer2 me-2"></i>Admin Dashboard</Link></li>
+                          <li><hr className="dropdown-divider" /></li>
+                        </>
+                      )}
                       <li><a href="#" onClick={handleLogout} className="dropdown-item"><i className="bi bi-box-arrow-right"></i> Log Out</a></li>
                       <li><Link to="/profile" className="dropdown-item"><i className="bi bi-bag-check"></i> My Orders</Link></li>
                       <li><Link to="/profile" className="dropdown-item"><i className="bi bi-person-badge"></i> Profile</Link></li>

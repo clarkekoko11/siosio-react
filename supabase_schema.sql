@@ -6,6 +6,7 @@ CREATE TABLE profiles (
   name TEXT,
   phone TEXT,
   profile_photo TEXT,
+  role TEXT DEFAULT 'customer',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -57,7 +58,18 @@ CREATE POLICY "Products are viewable by everyone."
   ON products FOR SELECT
   USING ( true );
   
--- (Only admins should insert/update/delete products in a real app, omitted for brevity)
+-- Products are managed by admins
+CREATE POLICY "Admins can insert products."
+  ON products FOR INSERT
+  WITH CHECK ( EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+
+CREATE POLICY "Admins can update products."
+  ON products FOR UPDATE
+  USING ( EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+
+CREATE POLICY "Admins can delete products."
+  ON products FOR DELETE
+  USING ( EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
 
 
 -- 3. Cart Table
@@ -146,9 +158,9 @@ CREATE TABLE orders (
 
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view their own orders."
+CREATE POLICY "Users can view their own orders or all if admin."
   ON orders FOR SELECT
-  USING ( auth.uid() = user_id );
+  USING ( auth.uid() = user_id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
 
 CREATE POLICY "Users can insert their own orders."
   ON orders FOR INSERT
@@ -181,13 +193,80 @@ CREATE POLICY "Users can insert items for their own orders."
 
 
 
-CREATE POLICY "Users can update their own orders."
+CREATE POLICY "Users can update their own orders or all if admin."
   ON orders FOR UPDATE
-  USING ( auth.uid() = user_id );
+  USING ( auth.uid() = user_id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
 
 
 
-CREATE POLICY "Users can delete their own orders."
+CREATE POLICY "Users can delete their own orders or all if admin."
   ON orders FOR DELETE
-  USING ( auth.uid() = user_id );
+  USING ( auth.uid() = user_id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+
+-- 8. Admin RPC Functions
+
+-- Securely deletes an auth user (cascades to profiles and orders)
+CREATE OR REPLACE FUNCTION delete_user_admin(target_user_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  -- Check if caller is admin
+  IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') THEN
+    RAISE EXCEPTION 'Not authorized. Admin access required.';
+  END IF;
+
+  DELETE FROM auth.users WHERE id = target_user_id;
+END;
+$$;
+
+-- Securely creates an auth user, bypassing email verification
+CREATE OR REPLACE FUNCTION create_user_admin(
+  new_email TEXT, 
+  new_password TEXT, 
+  new_name TEXT, 
+  new_role TEXT
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  new_user_id UUID := gen_random_uuid();
+BEGIN
+  -- Check if caller is admin
+  IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') THEN
+    RAISE EXCEPTION 'Not authorized. Admin access required.';
+  END IF;
+
+  -- 1. Insert into auth.users
+  INSERT INTO auth.users (
+    instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, 
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+  )
+  VALUES (
+    '00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated', 'authenticated', 
+    new_email, crypt(new_password, gen_salt('bf')), now(),
+    '{"provider": "email", "providers": ["email"]}',
+    format('{"full_name": "%s"}', new_name)::jsonb,
+    now(), now()
+  );
+
+  -- 2. Insert into auth.identities
+  INSERT INTO auth.identities (
+    provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at, id
+  )
+  VALUES (
+    new_user_id::text, new_user_id, 
+    format('{"sub": "%s", "email": "%s"}', new_user_id::text, new_email)::jsonb,
+    'email', now(), now(), now(), gen_random_uuid()
+  );
+
+  -- 3. Update the profile role (trigger creates the profile)
+  UPDATE public.profiles SET role = new_role WHERE id = new_user_id;
+
+  RETURN new_user_id;
+END;
+$$;
 

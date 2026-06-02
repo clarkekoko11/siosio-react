@@ -13,6 +13,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProfilePage from './pages/ProfilePage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import LoginPage from './pages/LoginPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -23,6 +24,16 @@ const ProtectedRoute = ({ children }) => {
   
   if (loading) return <div className="d-flex justify-content-center mt-5"><div className="spinner-border text-danger" role="status"></div></div>;
   if (!user) return <Navigate to="/login" replace />;
+  
+  return children;
+};
+
+// Admin Route Component
+const AdminRoute = ({ children }) => {
+  const { user, isAdmin, loading } = React.useContext(AuthContext);
+  
+  if (loading) return <div className="d-flex justify-content-center mt-5"><div className="spinner-border text-danger" role="status"></div></div>;
+  if (!user || !isAdmin) return <Navigate to="/" replace />;
   
   return children;
 };
@@ -61,6 +72,12 @@ export default function App() {
                 <ProtectedRoute>
                   <ProfilePage />
                 </ProtectedRoute>
+              } />
+              
+              <Route path="/admin" element={
+                <AdminRoute>
+                  <AdminDashboardPage />
+                </AdminRoute>
               } />
             </Route>
 
