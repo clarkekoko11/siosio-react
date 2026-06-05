@@ -7,7 +7,7 @@ export default function AboutPage() {
       <section className="about-hero position-relative">
         <div className="hero-overlay"></div>
         <div className="container position-relative text-center text-white py-5">
-          <h1 className="display-4 fw-bold mb-3">About <span className="sio-highlight">Sio</span><span className="sio-highlight">Sio</span></h1>
+          <h1 className="sio-highlight">About <span className="sio-highlight">Sio</span><span className="sio-highlight">Sio</span></h1>
           <p className="lead">Discover the story behind your favorite siomai and siopao</p>
         </div>
       </section>

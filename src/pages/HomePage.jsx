@@ -5,23 +5,24 @@ import '../styles/home.css';
 export default function HomePage() {
   return (
     <main>
+      {/* --- HERO SECTION --- */}
       <section className="hero">
-        <div className="hero-overlay"></div>
         <div className="hero-content">
           <h2 className="hero-title">
-            The <span className="sio-highlight">medyo NO.1 <span className="sio-highlight">Sio</span>mai and <span className="sio-highlight">Sio</span>pao Brand</span>
+            The <span className="highlight">medyo NO.1 <span className="highlight">Sio</span>mai and <span className="highlight">Sio</span>pao Brand</span>
           </h2>
           <p className="hero-subtitle">in the Philippines</p>
           <p className="hero-tagline">
-            <em><span className="sio-highlight">Sio</span>per Sarap, <span className="sio-highlight">Sio</span>per Affordable pa!</em>
+            <em><span className="highlight">Sio</span>per Sarap, <span className="highlight">Sio</span>per Affordable pa!</em>
           </p>
         </div>
         <div className="hero-bottom"></div>
       </section>
 
-      <section id="siomai-section" className="py-5">
+      {/* --- SIOMAI SECTION --- */}
+      <section id="siomai-section" className="flavors">
         <div className="container">
-          <h2 className="section-title"><span className="sio-highlight">Sio</span>mai Flavors</h2>
+          <h2 className="section-title"><span className="highlight">Sio</span>mai Flavors</h2>
           <div className="flavors-grid">
             {[
               { name: 'Pork Siomai', img: 'https://media.istockphoto.com/id/2182583656/photo/chinese-steamed-dumpling-or-shumai-in-japanese-language-meatball-dumpling-with-wanton-skin.jpg?s=612x612&w=0&k=20&c=0K7_ee0dwfAZhcZZajZRSv8uTifXZhG6LVmlKnSe-0U=' },
@@ -36,7 +37,7 @@ export default function HomePage() {
                   <img src={flavor.img} alt={flavor.name} />
                 </div>
                 <h3 className="flavor-title">
-                  {flavor.name.split('Siomai')[0]}<span className="sio-highlight">Sio</span>mai
+                  {flavor.name.split('Siomai')[0]}<span className="highlight">Sio</span>mai
                 </h3>
               </div>
             ))}
@@ -44,9 +45,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="siopao-section" className="py-5 bg-light">
+      {/* --- SIOPAO SECTION --- */}
+      <section id="siopao-section" className="siopao-section">
         <div className="container">
-          <h2 className="section-title"><span className="sio-highlight">Sio</span>pao Flavors</h2>
+          <h2 className="section-title"><span className="highlight">Sio</span>pao Flavors</h2>
           <div className="flavors-grid">
             {[
               { name: 'Asado Siopao', img: 'https://media.istockphoto.com/id/1163708923/photo/hong-kong-style-chicken-char-siew-in-classic-polo-bun-polo-bun-or-is-a-kind-of-crunchy-and.jpg?s=612x612&w=0&k=20&c=R9DC49-UsxYUPlImX6O47LQyafOu1Cp5rNxp3XifFNI=' },
@@ -61,7 +63,7 @@ export default function HomePage() {
                   <img src={flavor.img} alt={flavor.name} />
                 </div>
                 <h3 className="flavor-title">
-                  {flavor.name.split('Siopao')[0]}<span className="sio-highlight">Sio</span>pao
+                  {flavor.name.split('Siopao')[0]}<span className="highlight">Sio</span>pao
                 </h3>
               </div>
             ))}
@@ -69,11 +71,12 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* --- CONTACT SECTION --- */}
       <section className="contact-section">
         <div className="container">
           <div className="contact-wrapper">
             <div className="contact-image">
-              <img src="/images/mascot.png" alt="Contact Us" className="contact-img" />
+              <img src="/images/mascot.png" alt="Siopao Mascot Customer Service" className="contact-img" />
             </div>
             <div className="contact-form-container">
               <h2 className="contact-title">Message Us</h2>

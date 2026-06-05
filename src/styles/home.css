@@ -1,25 +1,41 @@
+/* --- 1. CSS VARIABLES (No more hardcoding!) --- */
+:root {
+    --brand-red: #dc3545;
+    --brand-red-hover: #c82333;
+    --brand-accent: #ffa500;
+    --dark-bg: #2c2c2c;
+    --light-bg: #f8f9fa;
+    --text-main: #333333;
+    --text-light: #ffffff;
+    --text-muted: #6c757d;
+    --border-radius-sm: 4px;
+    --border-radius-lg: 15px;
+    --transition-speed: 0.3s;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Updated styles - September 7, 2025 */
-
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', 'Arial', sans-serif; /* Poppins or a modern sans-serif looks much cleaner */
     line-height: 1.6;
-    color: #333;
-    padding-top: 90px; /* Account for fixed navbar */
+    color: var(--text-main);
+    padding-top: 90px;
+    background-color: var(--light-bg);
 }
 
-/* Hero Section */
+/* --- 2. HERO SECTION --- */
 .hero {
-    height: 1075px;
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
+    /* Replaced hardcoded 1075px with viewport height for responsiveness */
+    min-height: 100vh; 
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
                 url('/images/Homebg.jpg');
     background-size: cover;
     background-position: center;
+    background-attachment: fixed; /* Adds a nice slight parallax effect */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,46 +45,47 @@ body {
 }
 
 .hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    display: none; /* Removed because the linear-gradient on .hero handles this cleaner */
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
-    color: white;
-    max-width: 800px;
+    color: var(--text-light);
+    max-width: 900px;
     padding: 0 2rem;
+    margin-top: -50px; /* Slight optical adjustment */
 }
 
 .hero-title {
-    font-size: 3.5rem;
-    font-weight: bold;
+    font-size: clamp(2.5rem, 5vw, 4rem); /* Fluid typography: scales with screen size */
+    font-weight: 800;
     margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.8);
     line-height: 1.2;
 }
 
 .highlight {
-    color: #ffa500;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    color: var(--brand-red); /* Swapped from orange to your brand red based on screenshot */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
-    font-size: 1.8rem;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
     margin-bottom: 2rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-    font-weight: 300;
+    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 400;
+    color: #e0e0e0;
 }
 
 .hero-tagline {
     font-size: 1.2rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
     margin-top: 2rem;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 10px 20px;
+    display: inline-block;
+    border-radius: 30px;
 }
 
 .hero-tagline em {
@@ -76,28 +93,27 @@ body {
 }
 
 .hero-tagline strong {
-    color: #ffa500;
+    color: var(--brand-accent);
     font-weight: bold;
 }
 
 /* Hero Bottom Curve */
 .hero-bottom {
     position: absolute;
-    bottom: 0;
+    bottom: -1px; /* Prevents tiny gaps */
     left: 0;
     right: 0;
     height: 120px;
-    background: #dc3545;
+    background: var(--light-bg); /* Match next section instead of red */
     transform: translateY(50%);
     border-radius: 50% 50% 0 0 / 100% 100% 0 0;
     z-index: 1;
 }
 
-/* Flavors Section */
-.flavors {
-    padding: 80px 0;
-    background: #f8f9fa;
-    position: relative;
+/* --- 3. FLAVORS SECTION --- */
+.flavors, .siopao-section {
+    padding: 100px 0;
+    background: var(--light-bg);
 }
 
 .container {
@@ -109,77 +125,64 @@ body {
 .section-title {
     text-align: center;
     font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 3rem;
-    font-weight: bold;
+    color: var(--text-main);
+    margin-bottom: 3.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .flavors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
 }
 
 .flavor-item {
-    background: white;
-    border-radius: 15px;
+    background: #ffffff;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 3px solid #dc3545;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    border-bottom: 4px solid var(--brand-red); /* Subtler than a full border */
 }
 
 .flavor-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 .flavor-image {
     width: 100%;
-    height: 200px;
+    height: 220px;
     overflow: hidden;
-    position: relative;
 }
 
 .flavor-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;
 }
 
 .flavor-item:hover .flavor-image img {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .flavor-title {
     padding: 1.5rem;
     text-align: center;
-    font-size: 1.2rem;
-    color: #333;
-    font-weight: bold;
-    margin: 0;
-    background: white;
-}
-
-/* Siopao Section */
-.siopao-section {
-    padding: 80px 0;
+    font-size: 1.25rem;
+    color: var(--text-main);
+    font-weight: 700;
     background: #ffffff;
-    position: relative;
 }
 
-.siopao-section .section-title {
-    color: #333;
-}
-
-/* Contact Section */
+/* --- 4. CONTACT SECTION --- */
 .contact-section {
-    padding: 80px 0;
-    background: #2c2c2c;
-    color: white;
+    padding: 100px 0;
+    background: var(--dark-bg);
+    color: var(--text-light);
 }
 
 .contact-wrapper {
@@ -191,59 +194,54 @@ body {
 
 .contact-image {
     width: 100%;
-    height: 500px;
-    background: #404040;
-    border-radius: 10px;
-    overflow: hidden;
+    height: 100%;
+    min-height: 400px;
+    background: transparent; 
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none !important;
 }
 
 .contact-img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: none !important;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); /* Makes mascot pop */
 }
 
-
-.contact-image:empty::before {
-    content: "Image Placeholder";
-    color: #999;
-    font-size: 1.2rem;
-}
-
+/* Form styling based on your second screenshot */
 .contact-form-container {
-    width: 100%;
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .contact-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: white;
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+    color: var(--text-main); /* Changed to dark to contrast white card */
     position: relative;
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Matches your screenshot font */
 }
 
 .contact-title::after {
     content: '';
     position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: #dc3545;
-}
-
-.contact-form {
-    width: 100%;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--brand-red);
+    border-radius: 2px;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
@@ -254,224 +252,89 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #ccc;
-    font-weight: 500;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 12px 15px;
-    background: #404040;
-    border: 1px solid #555;
-    border-radius: 4px;
-    color: white;
+    padding: 14px 18px;
+    background: #f4f4f4; /* Light grey instead of dark to match screenshot */
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-main);
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #dc3545;
+    border-color: var(--brand-red);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 120px;
-}
-
-.captcha-group {
-    margin: 2rem 0;
+    min-height: 150px;
 }
 
 .captcha-placeholder {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.8rem;
     padding: 15px;
     background: #f9f9f9;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    color: #333;
-}
-
-.captcha-placeholder input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-.captcha-placeholder label {
-    color: #333;
-    margin: 0;
-    flex: 1;
-}
-
-.captcha-icon {
-    font-size: 1.2rem;
-    color: #666;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-main);
+    margin-bottom: 2rem;
 }
 
 .submit-btn {
-    background: #dc3545;
-    color: white;
-    padding: 12px 30px;
+    background: var(--brand-red);
+    color: var(--text-light);
+    padding: 14px 35px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.3s ease;
-    float: right;
+    transition: background var(--transition-speed) ease, transform 0.2s ease;
+    width: 100%; /* Spreads button nicely on modern forms */
 }
 
 .submit-btn:hover {
-    background: #c82333;
+    background: var(--brand-red-hover);
+    transform: translateY(-2px);
 }
 
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .nav-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0 1rem;
-        text-align: center;
-    }
-    
-    .nav-left,
-    .nav-right {
-        gap: 1rem;
-        justify-content: center;
-    }
-    
-    .nav-center {
-        order: -1;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.4rem;
-    }
-    
-    .hero-tagline {
-        font-size: 1rem;
-    }
-    
-    .flavors-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .section-title {
-        font-size: 2rem;
-    }
-    
+/* --- 5. RESPONSIVE DESIGN --- */
+@media (max-width: 992px) {
     .contact-wrapper {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
     
     .contact-image {
-        height: 300px;
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
     }
     
     .form-row {
         grid-template-columns: 1fr;
+        gap: 0;
     }
     
-    .submit-btn {
-        float: none;
-        width: 100%;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .footer-links {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-    
-    .footer-legal {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .dropdown-menu {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        margin-top: 0;
-        background: rgba(0, 0, 0, 0.7);
+    .contact-form-container {
+        padding: 2rem;
     }
 }
-
-@media (max-width: 480px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-    
-    .nav-link {
-        font-size: 0.9rem;
-    }
-    
-    .logo {
-        font-size: 1.5rem;
-    }
-    
-    .footer-links {
-        grid-template-columns: 1fr;
-    }
-    
-    .social-links {
-        justify-content: flex-start;
-    }
-}
-
-/* Responsive styles from products page */
-
-/* Fix header overlapping issues */
-@media (max-width: 1400px) {
-    .nav-container {
-        padding: 0 1.5rem;
-    }
-    
-    .nav-right {
-        gap: 0.6rem;
-        min-width: 320px;
-    }
-    
-    .logo {
-        font-size: 1.4rem;
-        max-width: 350px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .nav-right {
-        gap: 0.5rem;
-        min-width: 300px;
-    }
-    
-    .nav-search-input {
-        width: 100px;
-    }
-    
-    .logo {
-        font-size: 1.3rem;
-        max-width: 300px;
-    }
-}
-

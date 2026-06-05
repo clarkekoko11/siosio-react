@@ -1,31 +1,45 @@
+/* --- 1. CSS VARIABLES (Shared with Home) --- */
+:root {
+    --brand-red: #dc3545;
+    --brand-red-hover: #c82333;
+    --brand-accent: #ffa500;
+    --dark-bg: #2c2c2c;
+    --navbar-bg: rgba(30, 30, 30, 0.95);
+    --light-bg: #f8f9fa;
+    --text-main: #333333;
+    --text-light: #ffffff;
+    --text-muted: #aaaaaa;
+    --border-radius-sm: 4px;
+    --border-radius-lg: 15px;
+    --transition-speed: 0.3s;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Updated styles - September 7, 2025 */
-
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', 'Arial', sans-serif;
     line-height: 1.6;
-    color: #333;
-    padding-top: 100px; /* Account for fixed navbar */
+    color: var(--text-main);
+    padding-top: 80px; /* Adjusted to match new navbar height */
 }
 
-/* Navigation Styles */
+/* --- 2. NAVIGATION STYLES --- */
 .navbar {
-    background: rgba(0, 0, 0, 0.8);
-    padding: 1rem 0;
+    background: var(--navbar-bg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Adds depth */
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--brand-red); /* Subtle brand tie-in */
 }
 
-/* Hide any duplicate mobile menu buttons created by JavaScript */
 .mobile-menu-btn {
     display: none !important;
 }
@@ -34,162 +48,148 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
     padding: 0 2rem;
-    min-height: 60px;
+    height: 80px; /* Fixed height forces perfect vertical centering */
 }
- 
+
 .nav-left {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    flex: 1;
-    min-width: 200px;
 }
 
+/* --- BULLETPROOF NAVBAR STYLES --- */
 .nav-center {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 5;
-    white-space: nowrap;
-    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem !important; /* Increased from 1.5rem for much better breathing room */
 }
 
 .nav-right {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    margin-left: auto; 
     justify-content: flex-end;
-    flex: 1;
-    min-width: 350px;
-    position: relative;
-    z-index: 10;
+    gap: 1.5rem !important; /* Consistent spacing for Cart, Sign-in, and Search */
 }
 
-.page-header {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 4rem 0 2rem 0;
-    text-align: center;
-    position: relative;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+/* Typography & Links */
+.welcome-message {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Matches your brand vibe */
+    white-space: nowrap;
 }
-
-.page-title {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.page-subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-
 
 .logo {
-    color: white;
+    color: var(--text-light);
     font-size: 1.6rem;
     font-style: italic;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    max-width: 400px;
-    text-align: center;
 }
 
 .sio-highlight {
-    color: #dc3545;
-    font-family: "Joti One", serif;
+    color: var(--brand-red);
+    font-weight: 800;
 }
 
 .nav-link {
-    color: white;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s ease;
+    color: #ffffff !important; /* Fixes the invisible 'SHOP' text */
+    background-color: transparent !important; /* Kills the red block on 'HOME' */
+    white-space: nowrap !important; /* Stops 'ABOUT US' from stacking */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.5rem 0.2rem !important;
     position: relative;
-}
-
-.welcome-message {
-    color: white;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    margin-right: 0.5rem;
-}
-
-.cart-link {
-    font-size: 1.3em !important;
-    margin-left: 0.5rem;
-    margin-right: 0.3rem;
+    border: none !important;
+    border-radius: 0 !important;
 }
 
 .nav-link:hover {
-    color: #dc3545;
+    color: var(--brand-red, #dc3545) !important;
 }
-
-/* Active Navigation State */
+/* Refined Active Navigation State */
 .nav-link.active {
-    color: #dc3545 !important;
-    background-color: rgba(220, 53, 69, 0.15) !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-    border: 2px solid rgba(220, 53, 69, 0.3) !important;
+    color: var(--brand-red, #dc3545) !important;
 }
-
 .nav-link.active::after {
     content: '';
     position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     height: 3px;
-    background-color: #dc3545;
+    background-color: var(--brand-red, #dc3545);
     border-radius: 2px;
 }
-
-/* Active state for cart and other buttons */
-.btn.active {
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
-    color: white !important;
-    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+/* Specific styling for the Favorites link */
+.nav-link.text-danger {
+    color: var(--brand-red) !important;
 }
 
-/* Ensure favorites link active state works with text-danger class */
-.nav-link.text-danger.active {
-    background-color: rgba(220, 53, 69, 0.2) !important;
-    border: 2px solid rgba(220, 53, 69, 0.5) !important;
+/* Utilities & Buttons */
+.cart-link {
+    font-size: 1.3rem !important;
+    color: var(--text-light);
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-/* Make sure active state overrides hover effects */
-.nav-link.active:hover {
-    color: #dc3545 !important;
-    background-color: rgba(220, 53, 69, 0.25) !important;
-}
-
-.franchise-btn {
-    background: #dc3545;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 0.9rem;
+.btn.Sign-In {
+    padding: 0.4rem 1.5rem !important;
+    height: 42px; /* Forces a consistent height */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px !important;
     white-space: nowrap;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    background: transparent;
+    transition: all 0.3s ease;
 }
 
-.franchise-btn:hover {
-    background: #c82333;
-    color: white !important;
+.btn.Sign-In:hover {
+    background: var(--brand-red, #dc3545) !important;
+    border-color: var(--brand-red, #dc3545) !important;
+    color: #ffffff !important;
+}
+
+/* Seamless Search Bar */
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+    background: #f4f4f4;
+    font-size: 0.9rem;
+    width: 200px;
+}
+
+.search-btn {
+    background: var(--brand-red);
+    color: var(--text-light);
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0 20px 20px 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition-speed) ease;
+}
+
+.search-btn:hover {
+    background: var(--brand-red-hover);
 }
 
 /* Dropdown Styles */
@@ -201,14 +201,16 @@ body {
     position: absolute;
     top: 100%;
     right: 0;
-    background: rgba(0, 0, 0, 0.9);
-    min-width: 150px;
-    border-radius: 4px;
+    background: var(--navbar-bg);
+    min-width: 180px;
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    margin-top: 0.5rem;
+    transform: translateY(10px);
+    transition: all var(--transition-speed) ease;
+    margin-top: 1rem;
+    border-top: 3px solid var(--brand-red);
 }
 
 .dropdown:hover .dropdown-menu {
@@ -219,188 +221,35 @@ body {
 
 .dropdown-item {
     display: block;
-    color: white;
+    color: var(--text-light);
     text-decoration: none;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background 0.3s ease;
-}
-
-.dropdown-item:last-child {
-    border-bottom: none;
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background var(--transition-speed) ease;
 }
 
 .dropdown-item:hover {
-    background: rgba(220, 53, 69, 0.2);
-    color: #dc3545;
+    background: rgba(220, 53, 69, 0.15);
+    color: var(--brand-red);
+    padding-left: 1.5rem; /* Nice slide effect on hover */
 }
 
-/* Contact Section */
-.contact-section {
-    padding: 80px 0;
-    background: #2c2c2c;
-    color: white;
-}
-
-.contact-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-}
-
-.contact-image {
-    width: 100%;
-    height: 500px;
-    background: #404040;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none !important;
-}
-
-.contact-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: none !important;
-}
-
-
-.contact-image:empty::before {
-    content: "Image Placeholder";
-    color: #999;
-    font-size: 1.2rem;
-}
-
-.contact-form-container {
-    width: 100%;
-}
-
-.contact-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: white;
-    position: relative;
-}
-
-.contact-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: #dc3545;
-}
-
-.contact-form {
-    width: 100%;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #ccc;
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 12px 15px;
-    background: #404040;
-    border: 1px solid #555;
-    border-radius: 4px;
-    color: white;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #dc3545;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 120px;
-}
-
-.captcha-group {
-    margin: 2rem 0;
-}
-
-.captcha-placeholder {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 15px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    color: #333;
-}
-
-.captcha-placeholder input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-.captcha-placeholder label {
-    color: #333;
-    margin: 0;
-    flex: 1;
-}
-
-.captcha-icon {
-    font-size: 1.2rem;
-    color: #666;
-}
-
-.submit-btn {
-    background: #dc3545;
-    color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    float: right;
-}
-
-.submit-btn:hover {
-    background: #c82333;
-}
-
-/* Footer */
+/* --- 3. FOOTER STYLES --- */
 .footer {
     background: #1a1a1a;
     color: #ccc;
-    padding: 3rem 0 1rem 0;
+    padding: 4rem 0 1rem 0;
 }
 
 .footer-content {
     display: grid;
     grid-template-columns: 1fr 3fr;
-    gap: 3rem;
-    margin-bottom: 2rem;
+    gap: 4rem;
+    margin-bottom: 3rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
 }
 
 .footer-logo-section {
@@ -410,33 +259,26 @@ body {
 }
 
 .footer-logo {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     background: #333;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #dc3545;
+    border: 3px solid var(--brand-red);
+    overflow: hidden;
 }
 
 .logo-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 6px;
-}
-
-.footer-logo:empty::before {
-    content: "LOGO";
-    color: #666;
-    font-size: 0.9rem;
-    font-weight: bold;
 }
 
 .footer-copyright {
-    color: #999;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin: 0;
 }
@@ -453,10 +295,12 @@ body {
 }
 
 .footer-title {
-    color: white;
+    color: var(--text-light);
     font-size: 1.1rem;
-    margin-bottom: 1rem;
-    font-weight: bold;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .footer-list {
@@ -466,18 +310,18 @@ body {
 }
 
 .footer-list li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 
 .footer-link {
-    color: #ccc;
+    color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
+    font-size: 0.95rem;
+    transition: color var(--transition-speed) ease;
 }
 
 .footer-link:hover {
-    color: #dc3545;
+    color: var(--brand-red);
 }
 
 .social-links {
@@ -489,42 +333,31 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     background: #333;
     border-radius: 50%;
     text-decoration: none;
     font-size: 1.2rem;
-    transition: all 0.3s ease;
-    color: white;
+    transition: all var(--transition-speed) ease;
+    color: var(--text-light);
 }
 
 .social-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
-.social-link.facebook:hover {
-    background: #1877f2;
-}
-
-.social-link.instagram:hover {
-    background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
-}
-
-.social-link.twitter:hover {
-    background: #000000;
-}
-
-.social-icon {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
+.social-link.facebook:hover { background: #1877f2; }
+.social-link.instagram:hover { background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d); }
+.social-link.twitter:hover { background: #1da1f2; }
 
 .footer-bottom {
     border-top: 1px solid #333;
-    padding-top: 1rem;
+    padding-top: 1.5rem;
     text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .footer-legal {
@@ -534,197 +367,27 @@ body {
 }
 
 .legal-link {
-    color: #999;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 0.9rem;
-    transition: color 0.3s ease;
+    transition: color var(--transition-speed) ease;
 }
 
 .legal-link:hover {
-    color: #dc3545;
-}
-/* Smooth hover highlight */
-.hover-effect:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: background 0.3s ease;
+    color: var(--brand-red);
 }
 
-/* Scale effect on hover (buttons & icons) */
-.hover-scale {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hover-scale:hover {
-    transform: scale(1.08);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .nav-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0 1rem;
-        text-align: center;
-    }
-    
-    .nav-left,
-    .nav-right {
-        gap: 1rem;
-        justify-content: center;
-    }
-    
-    .nav-center {
-        order: -1;
-    }
-    
-    /* Mobile active navigation styling */
-    .nav-link.active {
-        padding: 0.75rem 1rem;
-        margin: 0.25rem;
-        border-radius: 8px;
-    }
-    
-    .nav-link.active::after {
-        display: none; /* Hide underline on mobile */
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.4rem;
-    }
-    
-    .hero-tagline {
-        font-size: 1rem;
-    }
-    
-    .flavors-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .section-title {
-        font-size: 2rem;
-    }
-    
-    .contact-wrapper {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .contact-image {
-        height: 300px;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .submit-btn {
-        float: none;
-        width: 100%;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .footer-links {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-    
-    .footer-legal {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .dropdown-menu {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        margin-top: 0;
-        background: rgba(0, 0, 0, 0.7);
-    }
-}
-
-@media (max-width: 480px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-    
-    .nav-link {
-        font-size: 0.9rem;
-    }
-    
-    .logo {
-        font-size: 1.5rem;
-    }
-    
-    .footer-links {
-        grid-template-columns: 1fr;
-    }
-    
-    .social-links {
-        justify-content: flex-start;
-    }
-}
-
-/* Responsive styles from products page */
-
-/* Fix header overlapping issues */
-@media (max-width: 1400px) {
-    .nav-container {
-        padding: 0 1.5rem;
-    }
-    
-    .nav-right {
-        gap: 0.6rem;
-        min-width: 320px;
-    }
-    
-    .logo {
-        font-size: 1.4rem;
-        max-width: 350px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .nav-right {
-        gap: 0.5rem;
-        min-width: 300px;
-    }
-    
-    .nav-search-input {
-        width: 100px;
-    }
-    
-    .logo {
-        font-size: 1.3rem;
-        max-width: 300px;
-    }
-}
-
-/* Login Notification Modal Styles */
+/* --- 4. MODAL STYLES --- */
 #loginNotificationModal .modal-content {
     border: none;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
 #loginNotificationModal .modal-header {
-    background: linear-gradient(135deg, #ffa500, #ff6b6b);
-    color: white;
-    border-radius: 20px 20px 0 0;
+    background: linear-gradient(135deg, var(--brand-accent), var(--brand-red));
+    color: var(--text-light);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
     padding: 1.5rem 2rem;
 }
 
@@ -738,13 +401,15 @@ body {
 }
 
 #loginNotificationModal .modal-body {
-    padding: 2rem;
-    background: white;
+    padding: 2.5rem 2rem;
+    background: var(--text-light);
+    text-align: center;
 }
 
 #loginNotificationModal .modal-body h4 {
-    color: #2c3e50;
-    font-weight: 600;
+    color: var(--text-main);
+    font-weight: 700;
+    margin-bottom: 1rem;
 }
 
 #loginNotificationModal .modal-body .text-muted {
@@ -753,52 +418,96 @@ body {
 }
 
 #loginNotificationModal .modal-footer {
-    background: #f8f9fa;
-    border-radius: 0 0 20px 20px;
+    background: var(--light-bg);
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
     padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 
 #loginNotificationModal .btn-primary {
-    background: linear-gradient(135deg, #ffa500, #ff6b6b);
+    background: linear-gradient(135deg, var(--brand-accent), var(--brand-red));
     border: none;
     border-radius: 50px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    padding: 0.6rem 1.5rem;
+    transition: all var(--transition-speed) ease;
 }
 
 #loginNotificationModal .btn-primary:hover {
-    background: linear-gradient(135deg, #ff6b6b, #ffa500);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 165, 0, 0.3);
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
 }
 
 #loginNotificationModal .btn-outline-secondary {
     border-radius: 50px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    padding: 0.6rem 1.5rem;
+    transition: all var(--transition-speed) ease;
 }
 
 #loginNotificationModal .btn-outline-secondary:hover {
+    background: #e2e6ea;
     transform: translateY(-2px);
 }
 
-/* SioSio Highlight in Modal */
-#loginNotificationModal .sio-highlight {
-    color: #ffa500;
-    font-weight: 700;
+/* --- 5. RESPONSIVE DESIGN --- */
+@media (max-width: 1200px) {
+    .nav-center { gap: 1rem; }
+    .search-input { width: 150px; }
+    .welcome-message { display: none; } /* Hide on smaller screens to save space */
 }
 
-/* Responsive Modal */
-@media (max-width: 768px) {
-    #loginNotificationModal .modal-header,
-    #loginNotificationModal .modal-body,
-    #loginNotificationModal .modal-footer {
-        padding: 1rem 1.5rem;
+@media (max-width: 992px) {
+    .nav-container {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem;
+        gap: 1rem;
     }
     
-    #loginNotificationModal .btn-lg {
+    .nav-center {
         width: 100%;
-        margin-bottom: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .nav-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-logo-section {
+        align-items: center;
     }
 }
 
+@media (max-width: 768px) {
+    body { padding-top: 140px; } /* Taller padding for stacked nav */
+    
+    .footer-links {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+        border: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-links { grid-template-columns: 1fr; }
+    .social-links { justify-content: center; }
+}
