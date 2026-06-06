@@ -1,7 +1,7 @@
 -- Run this SQL in your Supabase SQL Editor
 
 -- 1. Profiles Table (extends auth.users)
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   name TEXT,
   phone TEXT,
@@ -10,20 +10,56 @@ CREATE TABLE profiles (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- Create a helper function to avoid infinite recursion in RLS
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Turn on RLS for profiles
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public profiles are viewable by everyone."
+DROP POLICY IF EXISTS "Profiles are viewable by owner or admin." ON profiles;
+CREATE POLICY "Profiles are viewable by owner or admin."
   ON profiles FOR SELECT
-  USING ( true );
+  USING ( auth.uid() = id OR public.is_admin() );
 
+DROP POLICY IF EXISTS "Users can insert their own profile." ON profiles;
 CREATE POLICY "Users can insert their own profile."
   ON profiles FOR INSERT
   WITH CHECK ( auth.uid() = id );
 
+DROP POLICY IF EXISTS "Users can update own profile." ON profiles;
 CREATE POLICY "Users can update own profile."
   ON profiles FOR UPDATE
   USING ( auth.uid() = id );
+
+-- Create a trigger to prevent non-admins from changing their role
+CREATE OR REPLACE FUNCTION public.check_role_update()
+RETURNS trigger AS $$
+BEGIN
+  -- If the role is being changed
+  IF NEW.role IS DISTINCT FROM OLD.role THEN
+    -- Check if the current user is an admin
+    IF NOT public.is_admin() THEN
+      -- If not an admin, revert the role change silently or raise error
+      -- Reverting silently is usually better for UX if frontend sends entire object
+      NEW.role = OLD.role;
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_profile_role_update ON profiles;
+CREATE TRIGGER on_profile_role_update
+  BEFORE UPDATE ON profiles
+  FOR EACH ROW EXECUTE PROCEDURE public.check_role_update();
 
 -- Create a trigger to automatically create a profile for new users
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -35,13 +71,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 
 -- 2. Products Table
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   category TEXT NOT NULL,
@@ -54,26 +91,30 @@ CREATE TABLE products (
 -- Turn on RLS for products
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Products are viewable by everyone." ON products;
 CREATE POLICY "Products are viewable by everyone."
   ON products FOR SELECT
   USING ( true );
   
 -- Products are managed by admins
+DROP POLICY IF EXISTS "Admins can insert products." ON products;
 CREATE POLICY "Admins can insert products."
   ON products FOR INSERT
-  WITH CHECK ( EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+  WITH CHECK ( public.is_admin() );
 
+DROP POLICY IF EXISTS "Admins can update products." ON products;
 CREATE POLICY "Admins can update products."
   ON products FOR UPDATE
-  USING ( EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+  USING ( public.is_admin() );
 
+DROP POLICY IF EXISTS "Admins can delete products." ON products;
 CREATE POLICY "Admins can delete products."
   ON products FOR DELETE
-  USING ( EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+  USING ( public.is_admin() );
 
 
 -- 3. Cart Table
-CREATE TABLE cart (
+CREATE TABLE IF NOT EXISTS cart (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
@@ -86,25 +127,29 @@ CREATE TABLE cart (
 -- Turn on RLS for cart
 ALTER TABLE cart ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own cart." ON cart;
 CREATE POLICY "Users can view their own cart."
   ON cart FOR SELECT
   USING ( auth.uid() = user_id );
 
+DROP POLICY IF EXISTS "Users can insert into their own cart." ON cart;
 CREATE POLICY "Users can insert into their own cart."
   ON cart FOR INSERT
   WITH CHECK ( auth.uid() = user_id );
 
+DROP POLICY IF EXISTS "Users can update their own cart." ON cart;
 CREATE POLICY "Users can update their own cart."
   ON cart FOR UPDATE
   USING ( auth.uid() = user_id );
 
+DROP POLICY IF EXISTS "Users can delete from their own cart." ON cart;
 CREATE POLICY "Users can delete from their own cart."
   ON cart FOR DELETE
   USING ( auth.uid() = user_id );
 
 
 -- 4. Favorites Table
-CREATE TABLE favorites (
+CREATE TABLE IF NOT EXISTS favorites (
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
@@ -114,14 +159,17 @@ CREATE TABLE favorites (
 -- Turn on RLS for favorites
 ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own favorites." ON favorites;
 CREATE POLICY "Users can view their own favorites."
   ON favorites FOR SELECT
   USING ( auth.uid() = user_id );
 
+DROP POLICY IF EXISTS "Users can insert their own favorites." ON favorites;
 CREATE POLICY "Users can insert their own favorites."
   ON favorites FOR INSERT
   WITH CHECK ( auth.uid() = user_id );
 
+DROP POLICY IF EXISTS "Users can delete their own favorites." ON favorites;
 CREATE POLICY "Users can delete their own favorites."
   ON favorites FOR DELETE
   USING ( auth.uid() = user_id );
@@ -144,7 +192,7 @@ INSERT INTO products (name, category, description, price, image) VALUES
 
 
 -- 6. Orders Table
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL,
@@ -158,16 +206,18 @@ CREATE TABLE orders (
 
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own orders or all if admin." ON orders;
 CREATE POLICY "Users can view their own orders or all if admin."
   ON orders FOR SELECT
   USING ( auth.uid() = user_id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
 
+DROP POLICY IF EXISTS "Users can insert their own orders." ON orders;
 CREATE POLICY "Users can insert their own orders."
   ON orders FOR INSERT
-  WITH CHECK ( auth.uid() = user_id );
+  WITH CHECK ( auth.uid() = user_id AND status = 'pending' );
 
 -- 7. Order Items Table
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
   product_id INTEGER REFERENCES products(id) ON DELETE RESTRICT,
@@ -179,12 +229,14 @@ CREATE TABLE order_items (
 
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view items of their own orders." ON order_items;
 CREATE POLICY "Users can view items of their own orders."
   ON order_items FOR SELECT
   USING ( EXISTS (
     SELECT 1 FROM orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid()
   ) );
 
+DROP POLICY IF EXISTS "Users can insert items for their own orders." ON order_items;
 CREATE POLICY "Users can insert items for their own orders."
   ON order_items FOR INSERT
   WITH CHECK ( EXISTS (
@@ -193,15 +245,15 @@ CREATE POLICY "Users can insert items for their own orders."
 
 
 
-CREATE POLICY "Users can update their own orders or all if admin."
+DROP POLICY IF EXISTS "Only admins can update orders." ON orders;
+CREATE POLICY "Only admins can update orders."
   ON orders FOR UPDATE
-  USING ( auth.uid() = user_id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+  USING ( public.is_admin() );
 
-
-
-CREATE POLICY "Users can delete their own orders or all if admin."
+DROP POLICY IF EXISTS "Only admins can delete orders." ON orders;
+CREATE POLICY "Only admins can delete orders."
   ON orders FOR DELETE
-  USING ( auth.uid() = user_id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') );
+  USING ( public.is_admin() );
 
 -- 8. Admin RPC Functions
 
@@ -213,7 +265,7 @@ SECURITY DEFINER
 AS $$
 BEGIN
   -- Check if caller is admin
-  IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') THEN
+  IF NOT public.is_admin() THEN
     RAISE EXCEPTION 'Not authorized. Admin access required.';
   END IF;
 
@@ -236,7 +288,7 @@ DECLARE
   new_user_id UUID := gen_random_uuid();
 BEGIN
   -- Check if caller is admin
-  IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') THEN
+  IF NOT public.is_admin() THEN
     RAISE EXCEPTION 'Not authorized. Admin access required.';
   END IF;
 

@@ -15,7 +15,6 @@ import ContactPage from './pages/ContactPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import LoginPage from './pages/LoginPage';
-import VerifyOtpPage from './pages/VerifyOtpPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 // Protected Route Component
@@ -83,7 +82,6 @@ export default function App() {
 
             {/* Auth Routes without the main Layout (no header/footer usually) */}
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/verify" element={<VerifyOtpPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           </Routes>
         </Router>
