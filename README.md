@@ -1,16 +1,27 @@
-# React + Vite
+# SioSio React Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive e-commerce web application for SioSio, a premium dimsum brand in the Philippines.
 
-Currently, two official plugins are available:
+## Features
+- **Modern UI/UX**: Completely overhauled user interface with consistent, modern typography and clean layouts.
+- **Responsive Design**: Fully mobile-responsive across all pages.
+- **Authentication**: Secure login and registration flows.
+- **Shopping Cart**: Seamless cart and checkout experience.
+- **Admin Dashboard**: Comprehensive dashboard for managing orders and analytics.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Technology Stack
+- React
+- Vite
+- Tailwind CSS
+- Supabase (Backend & Authentication)
+- Framer Motion (Animations)
 
-## React Compiler
+## Security
+This project implements several security best practices:
+- Passwords are securely hashed using bcrypt before being stored in the database.
+- Modern React practices to prevent XSS (Cross-Site Scripting).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Setup
+1. Clone the repository
+2. Run `npm install`
+3. Run `npm run dev` to start the development server
