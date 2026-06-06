@@ -1,74 +1,75 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
-import '../styles/cart.css';
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { cartItems, cartCount, updateQuantity, removeFromCart } = useContext(CartContext);
   
-  // Basic total calculation from mock state
   const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
   const total = safeCartItems.reduce((acc, item) => acc + ((item?.price || 0) * (item?.quantity || 1)), 0);
 
   return (
-    <div className="container py-5 cart-container">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">
-          <i className="bi bi-cart3 me-2"></i>Your Cart 
-          <span className="badge bg-danger rounded-pill ms-2">{cartCount} items</span>
-        </h2>
-        <Link to="/shop" className="btn btn-outline-secondary">
-          <i className="bi bi-arrow-left me-2"></i>Continue Shopping
-        </Link>
-      </div>
+    <main className="pt-32 pb-32 bg-sio-bg min-h-screen font-sans text-sio-text selection:bg-sio-yellow selection:text-sio-dark">
+      <div className="container-custom">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 border-b-[0.5px] border-sio-border pb-6 gap-4">
+          <div>
+            <span className="text-xs uppercase tracking-[0.2em] text-sio-yellow mb-2 block">Your Selection</span>
+            <h2 className="text-4xl font-heading font-bold text-sio-text flex items-center">
+              Reservation Cart 
+              <span className="ml-4 font-sans bg-sio-red text-white font-bold text-[0.65rem] uppercase tracking-widest px-3 py-1.5 rounded-md not-italic">{cartCount} items</span>
+            </h2>
+          </div>
+          <Link to="/shop" className="text-xs uppercase tracking-widest text-sio-text-muted hover:text-sio-yellow transition-colors flex items-center">
+            <i className="bi bi-arrow-left mr-2"></i>Continue Browsing
+          </Link>
+        </div>
 
-      <div className="row">
-        <div className="col-lg-8">
-          <div className="card shadow-sm mb-4">
-            <div className="card-body p-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <div className="bg-sio-surface border-[0.5px] border-sio-border">
               {cartItems.length === 0 ? (
-                <div className="text-center py-5">
-                  <i className="bi bi-cart-x text-muted" style={{ fontSize: '4rem' }}></i>
-                  <h4 className="mt-3">Your cart is empty</h4>
-                  <p className="text-muted">Looks like you haven't added any SioSio treats yet.</p>
-                  <Link to="/shop" className="btn btn-primary mt-2">Go to Shop</Link>
+                <div className="text-center py-24 px-4">
+                  <i className="bi bi-bag text-sio-text-muted text-4xl block mb-6"></i>
+                  <h4 className="text-2xl font-heading italic text-sio-text mb-2">Your cart is empty</h4>
+                  <p className="text-sio-text-muted mb-8 font-light">You have not made any selections yet.</p>
+                  <Link to="/shop" className="btn-primary text-xs uppercase tracking-widest px-8 py-3 inline-block">View Menu</Link>
                 </div>
               ) : (
-                <div className="table-responsive">
-                  <table className="table table-hover align-middle mb-0">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Subtotal</th>
-                        <th>Action</th>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-sio-bg text-sio-text-muted text-[0.65rem] uppercase tracking-[0.2em] border-b-[0.5px] border-sio-border">
+                        <th className="py-4 px-6 font-medium">Product</th>
+                        <th className="py-4 px-6 font-medium">Price</th>
+                        <th className="py-4 px-6 font-medium text-center">Quantity</th>
+                        <th className="py-4 px-6 font-medium text-right">Subtotal</th>
+                        <th className="py-4 px-6 font-medium text-center"></th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y-[0.5px] divide-sio-border">
                       {safeCartItems.map((item, idx) => (
-                        <tr key={idx}>
-                          <td>
-                            <div className="d-flex align-items-center">
-                              <img src={item.image} alt={item.name} className="img-thumbnail me-3" style={{ width: '60px', height: '60px', objectFit: 'cover' }} />
+                        <tr key={idx} className="hover:bg-sio-gray/20 transition-colors">
+                          <td className="py-6 px-6">
+                            <div className="flex items-center">
+                              <img src={item.image} alt={item.name} className="w-20 h-20 object-cover border-[0.5px] border-sio-border mr-6 filter grayscale-[20%]" />
                               <div>
-                                <h6 className="mb-0 fw-bold">{item.name}</h6>
+                                <h6 className="font-heading text-lg text-sio-text">{item.name}</h6>
                               </div>
                             </div>
                           </td>
-                          <td>₱{(item.price || 0).toFixed(2)}</td>
-                          <td>
-                            <div className="input-group input-group-sm" style={{ width: '120px' }}>
-                              <button className="btn btn-outline-secondary" type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)}><i className="bi bi-dash"></i></button>
-                              <input type="text" className="form-control text-center" value={item.quantity} readOnly />
-                              <button className="btn btn-outline-secondary" type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)}><i className="bi bi-plus"></i></button>
+                          <td className="py-6 px-6 text-sio-text-muted font-light">₱{(item.price || 0).toFixed(2)}</td>
+                          <td className="py-6 px-6">
+                            <div className="flex items-center justify-between border-[0.5px] border-sio-border w-28 mx-auto bg-sio-bg">
+                              <button className="w-8 h-10 flex items-center justify-center text-sio-text-muted hover:text-sio-yellow transition-colors" type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)}><i className="bi bi-dash"></i></button>
+                              <input type="text" className="w-10 h-10 text-center text-sio-text text-sm font-medium border-none focus:outline-none focus:ring-0 bg-transparent p-0" value={item.quantity} readOnly />
+                              <button className="w-8 h-10 flex items-center justify-center text-sio-text-muted hover:text-sio-yellow transition-colors" type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)}><i className="bi bi-plus"></i></button>
                             </div>
                           </td>
-                          <td className="fw-bold">₱{((item.price || 0) * (item.quantity || 1)).toFixed(2)}</td>
-                          <td>
-                            <button className="btn btn-sm btn-outline-danger" onClick={() => removeFromCart(item.id)}>
-                              <i className="bi bi-trash"></i>
+                          <td className="py-6 px-6 font-medium text-sio-yellow text-right tracking-wide">₱{((item.price || 0) * (item.quantity || 1)).toFixed(2)}</td>
+                          <td className="py-6 px-6 text-center">
+                            <button className="w-8 h-8 rounded-full flex items-center justify-center text-sio-text-muted hover:text-sio-red mx-auto transition-colors" onClick={() => removeFromCart(item.id)}>
+                              <i className="bi bi-x-lg text-sm"></i>
                             </button>
                           </td>
                         </tr>
@@ -79,34 +80,38 @@ export default function CartPage() {
               )}
             </div>
           </div>
-        </div>
 
-        <div className="col-lg-4">
-          <div className="card shadow-sm sticky-top" style={{ top: '100px' }}>
-            <div className="card-header bg-white py-3">
-              <h5 className="mb-0 fw-bold">Order Summary</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-flex justify-content-between mb-3">
-                <span>Subtotal</span>
-                <strong>₱{total.toFixed(2)}</strong>
+          <div className="lg:col-span-1">
+            <div className="bg-sio-surface border-[0.5px] border-sio-border sticky top-32">
+              <div className="p-8 border-b-[0.5px] border-sio-border">
+                <h5 className="text-xl font-heading font-bold text-sio-text">Summary</h5>
               </div>
-              <div className="d-flex justify-content-between mb-3">
-                <span>Shipping</span>
-                <span className="text-success">Free</span>
+              <div className="p-8">
+                <div className="flex justify-between mb-4 text-sio-text-muted text-sm font-light">
+                  <span>Subtotal</span>
+                  <span className="text-sio-text font-medium tracking-wide">₱{total.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-8 text-sio-text-muted text-sm font-light">
+                  <span>Delivery</span>
+                  <span className="text-sio-yellow font-medium">Complimentary</span>
+                </div>
+                <div className="h-[1px] bg-sio-gray w-full mb-8"></div>
+                <div className="flex justify-between mb-10 items-end">
+                  <span className="text-xs uppercase tracking-widest text-sio-text-muted">Total</span>
+                  <span className="text-2xl font-sans font-black tracking-wide text-sio-yellow">₱{total.toFixed(2)}</span>
+                </div>
+                <button 
+                  className="w-full btn-primary py-4 text-xs uppercase tracking-widest flex items-center justify-center" 
+                  disabled={safeCartItems.length === 0} 
+                  onClick={() => navigate('/checkout')}
+                >
+                  Proceed to Checkout <i className="bi bi-arrow-right ml-3 text-lg"></i>
+                </button>
               </div>
-              <hr />
-              <div className="d-flex justify-content-between mb-4">
-                <span className="fs-5 fw-bold">Total</span>
-                <span className="fs-5 fw-bold text-danger">₱{total.toFixed(2)}</span>
-              </div>
-              <button className="btn btn-primary w-100 py-2 fs-5 checkout-btn" disabled={safeCartItems.length === 0} onClick={() => navigate('/checkout')}>
-                Proceed to Checkout <i className="bi bi-arrow-right ms-2"></i>
-              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

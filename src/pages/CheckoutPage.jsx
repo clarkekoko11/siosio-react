@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
 import { useCheckout } from '../hooks/useCheckout';
-import '../styles/cart.css'; // Reuse cart styles for consistency
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -23,7 +22,6 @@ export default function CheckoutPage() {
 
   const [orderComplete, setOrderComplete] = useState(false);
 
-  // Redirect if cart is empty and not completed
   useEffect(() => {
     if (safeCartItems.length === 0 && !orderComplete) {
       navigate('/cart');
@@ -45,164 +43,175 @@ export default function CheckoutPage() {
 
   if (orderComplete) {
     return (
-      <div className="container py-5 mt-5 text-center">
-        <div className="card shadow-sm mx-auto" style={{ maxWidth: '600px' }}>
-          <div className="card-body py-5">
-            <i className="bi bi-check-circle-fill text-success" style={{ fontSize: '5rem' }}></i>
-            <h2 className="mt-4 mb-3 fw-bold text-success">Order Confirmed!</h2>
-            <p className="lead mb-4">
-              Thank you for ordering with SioSio! Your order has been placed successfully. 
-              We'll start preparing your Siopao and Siomai right away!
+      <main className="pt-32 pb-32 min-h-screen bg-sio-bg flex items-center justify-center font-sans text-sio-text selection:bg-sio-yellow selection:text-sio-dark">
+        <div className="container-custom flex justify-center">
+          <div className="bg-sio-surface border-[0.5px] border-sio-border p-12 md:p-20 max-w-2xl text-center w-full shadow-2xl">
+            <div className="w-20 h-20 bg-sio-bg text-sio-yellow rounded-full flex items-center justify-center mx-auto mb-10 border-[0.5px] border-sio-yellow">
+              <i className="bi bi-check-lg text-4xl"></i>
+            </div>
+            <h2 className="text-4xl font-heading italic text-sio-text mb-6">Order Confirmed</h2>
+            <p className="text-sm font-light text-sio-text-muted mb-12 leading-relaxed max-w-md mx-auto">
+              Your culinary selection has been received. We will begin preparation immediately to ensure the finest quality.
             </p>
-            <div className="d-grid gap-2 col-8 mx-auto">
-              <Link to="/shop" className="btn btn-primary btn-lg">Back to Shop</Link>
-              <Link to="/profile" className="btn btn-outline-secondary">View My Orders</Link>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+              <Link to="/shop" className="btn-primary py-4 px-10 text-xs uppercase tracking-widest w-full sm:w-auto">Return to Menu</Link>
+              <Link to="/profile" className="py-4 px-10 text-xs uppercase tracking-widest w-full sm:w-auto bg-transparent border-[0.5px] border-sio-border text-sio-text hover:border-sio-yellow hover:text-sio-yellow transition-colors">View History</Link>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="container py-5 cart-container">
-      <div className="mb-4">
-        <Link to="/cart" className="text-decoration-none text-secondary">
-          <i className="bi bi-arrow-left me-2"></i>Back to Cart
-        </Link>
-        <h2 className="mt-3 mb-0 fw-bold">
-          <i className="bi bi-bag-check me-2"></i>Checkout
-        </h2>
-      </div>
-
-      <div className="row">
-        <div className="col-lg-7 mb-4">
-          <div className="card shadow-sm">
-            <div className="card-header bg-white py-3">
-              <h5 className="mb-0 fw-bold">Shipping Details</h5>
-            </div>
-            <div className="card-body p-4">
-              {error && (
-                <div className="alert alert-danger">
-                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                  {error}
-                </div>
-              )}
-              
-              <form onSubmit={handleCheckout} id="checkout-form">
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Full Name</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    name="fullName"
-                    value={shippingDetails.fullName}
-                    onChange={handleChange}
-                    required 
-                    placeholder="Enter your complete name"
-                  />
-                </div>
-                
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Phone Number</label>
-                  <input 
-                    type="tel" 
-                    className="form-control" 
-                    name="phone"
-                    value={shippingDetails.phone}
-                    onChange={handleChange}
-                    required 
-                    placeholder="e.g. 09123456789"
-                  />
-                </div>
-                
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Delivery Address</label>
-                  <textarea 
-                    className="form-control" 
-                    rows="3" 
-                    name="address"
-                    value={shippingDetails.address}
-                    onChange={handleChange}
-                    required 
-                    placeholder="Enter your complete delivery address (House No., Street, Barangay, City)"
-                  ></textarea>
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label fw-bold">Delivery Notes (Optional)</label>
-                  <textarea 
-                    className="form-control" 
-                    rows="2" 
-                    name="notes"
-                    value={shippingDetails.notes}
-                    onChange={handleChange}
-                    placeholder="Any special instructions for the rider?"
-                  ></textarea>
-                </div>
-                
-                <div className="alert alert-info">
-                  <i className="bi bi-info-circle-fill me-2"></i>
-                  <strong>Payment Method:</strong> Currently, we only accept Cash on Delivery (COD). Please prepare exact change if possible!
-                </div>
-              </form>
-            </div>
-          </div>
+    <main className="pt-32 pb-32 bg-sio-bg min-h-screen font-sans text-sio-text selection:bg-sio-yellow selection:text-sio-dark">
+      <div className="container-custom mx-auto max-w-6xl">
+        <div className="mb-12 pb-6 border-b-[0.5px] border-sio-border">
+          <Link to="/cart" className="text-[0.65rem] uppercase tracking-widest text-sio-text-muted hover:text-sio-yellow transition-colors mb-6 inline-flex items-center">
+            <i className="bi bi-arrow-left mr-3"></i>Return to Cart
+          </Link>
+          <h2 className="text-4xl font-heading italic text-sio-text">
+            Secure Checkout
+          </h2>
         </div>
 
-        <div className="col-lg-5">
-          <div className="card shadow-sm sticky-top" style={{ top: '100px' }}>
-            <div className="card-header bg-white py-3">
-              <h5 className="mb-0 fw-bold">Order Summary</h5>
-            </div>
-            <div className="card-body p-0">
-              <div className="list-group list-group-flush mb-3">
-                {safeCartItems.map((item, idx) => (
-                  <div key={idx} className="list-group-item d-flex justify-content-between align-items-center py-3">
-                    <div className="d-flex align-items-center">
-                      <span className="badge bg-secondary me-3">{item.quantity}x</span>
-                      <div>
-                        <h6 className="mb-0 fw-bold">{item.name}</h6>
-                        <small className="text-muted">₱{(item.price || 0).toFixed(2)} each</small>
-                      </div>
-                    </div>
-                    <span className="fw-bold">₱{((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          <div className="lg:col-span-7 xl:col-span-8">
+            <div className="bg-sio-surface border-[0.5px] border-sio-border mb-8">
+              <div className="px-10 py-8 border-b-[0.5px] border-sio-border bg-sio-surface">
+                <h5 className="text-2xl font-heading italic text-sio-text">Delivery Details</h5>
+              </div>
+              <div className="p-10">
+                {error && (
+                  <div className="bg-red-900/50 text-red-200 p-5 border-[0.5px] border-red-500 flex items-center mb-8">
+                    <i className="bi bi-exclamation-triangle mr-4 text-lg"></i>
+                    <p className="text-sm font-light tracking-wide">{error}</p>
                   </div>
-                ))}
+                )}
+                
+                <form onSubmit={handleCheckout} id="checkout-form" className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                      <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Full Name</label>
+                      <input 
+                        type="text" 
+                        name="fullName"
+                        value={shippingDetails.fullName}
+                        onChange={handleChange}
+                        required 
+                        className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm transition-colors"
+                        placeholder="Juan Dela Cruz"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Phone Number</label>
+                      <input 
+                        type="tel" 
+                        name="phone"
+                        value={shippingDetails.phone}
+                        onChange={handleChange}
+                        required 
+                        className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm transition-colors"
+                        placeholder="0912 345 6789"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Delivery Address</label>
+                    <textarea 
+                      rows="2" 
+                      name="address"
+                      value={shippingDetails.address}
+                      onChange={handleChange}
+                      required 
+                      className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm transition-colors resize-none"
+                      placeholder="House No., Street, Barangay, City"
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2 flex justify-between">
+                      <span>Delivery Notes</span>
+                      <span className="text-sio-text-muted font-light tracking-wide">Optional</span>
+                    </label>
+                    <textarea 
+                      rows="1" 
+                      name="notes"
+                      value={shippingDetails.notes}
+                      onChange={handleChange}
+                      className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm transition-colors resize-none"
+                      placeholder="Special instructions for the courier"
+                    ></textarea>
+                  </div>
+                  
+                  <div className="bg-sio-bg border-[0.5px] border-sio-border text-gray-300 p-6 flex items-start mt-10">
+                    <i className="bi bi-wallet2 text-sio-yellow mt-0.5 mr-4 text-lg"></i>
+                    <div>
+                      <strong className="block mb-2 text-[0.65rem] uppercase tracking-widest text-sio-text">Cash on Delivery (COD)</strong>
+                      <span className="text-sm font-light leading-relaxed">Currently, we only accept cash upon delivery. Please prepare the exact amount to expedite the process.</span>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
-            
-            <div className="card-footer bg-white p-4">
-              <div className="d-flex justify-content-between mb-2">
-                <span className="text-muted">Subtotal ({cartCount} items)</span>
-                <span>₱{subtotal.toFixed(2)}</span>
+          </div>
+
+          <div className="lg:col-span-5 xl:col-span-4">
+            <div className="bg-sio-surface border-[0.5px] border-sio-border sticky top-32">
+              <div className="px-8 py-8 border-b-[0.5px] border-sio-border bg-sio-surface">
+                <h5 className="text-2xl font-heading font-bold text-sio-text">Order Summary</h5>
               </div>
-              <div className="d-flex justify-content-between mb-3">
-                <span className="text-muted">Delivery Fee</span>
-                <span>₱{deliveryFee.toFixed(2)}</span>
-              </div>
-              <hr />
-              <div className="d-flex justify-content-between mb-4">
-                <span className="fs-5 fw-bold">Total to Pay</span>
-                <span className="fs-5 fw-bold text-danger">₱{total.toFixed(2)}</span>
+              <div className="p-0">
+                <div className="divide-y-[0.5px] divide-sio-border max-h-96 overflow-y-auto px-8">
+                  {safeCartItems.map((item, idx) => (
+                    <div key={idx} className="py-6 flex justify-between items-center">
+                      <div className="flex items-center">
+                        <span className="text-[0.65rem] uppercase tracking-widest text-sio-yellow mr-5 w-4">{item.quantity}x</span>
+                        <div>
+                          <h6 className="font-heading text-lg text-sio-text">{item.name}</h6>
+                          <span className="font-light text-sio-text-muted text-xs tracking-wide">₱{(item.price || 0).toFixed(2)} each</span>
+                        </div>
+                      </div>
+                      <span className="font-medium text-sio-yellow tracking-wide">₱{((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               
-              <button 
-                type="submit" 
-                form="checkout-form" 
-                className="btn btn-danger w-100 py-3 fs-5 fw-bold checkout-btn" 
-                disabled={loading || safeCartItems.length === 0}
-              >
-                {loading ? (
-                  <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...</>
-                ) : (
-                  <>Place Order (COD) <i className="bi bi-check2-circle ms-2"></i></>
-                )}
-              </button>
+              <div className="bg-sio-bg p-8 border-t-[0.5px] border-sio-border">
+                <div className="flex justify-between mb-4 text-sm font-light text-sio-text-muted tracking-wide">
+                  <span>Subtotal ({cartCount} items)</span>
+                  <span className="text-sio-text font-medium">₱{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-6 text-sm font-light text-sio-text-muted tracking-wide">
+                  <span>Delivery Fee</span>
+                  <span className="text-sio-text font-medium">₱{deliveryFee.toFixed(2)}</span>
+                </div>
+                <div className="h-[0.5px] bg-sio-gray w-full mb-6"></div>
+                <div className="flex justify-between mb-8">
+                  <span className="text-[0.65rem] uppercase tracking-[0.2em] text-sio-text flex items-center">Total Amount</span>
+                  <span className="text-2xl font-sans font-black text-sio-yellow tracking-wide">₱{total.toFixed(2)}</span>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  form="checkout-form" 
+                  className="w-full btn-primary py-4 text-xs uppercase tracking-widest flex justify-center items-center gap-3 transition-all hover:bg-black" 
+                  disabled={loading || safeCartItems.length === 0}
+                >
+                  {loading ? (
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Processing...</>
+                  ) : (
+                    <>Confirm Purchase <i className="bi bi-arrow-right"></i></>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

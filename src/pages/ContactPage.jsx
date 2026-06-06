@@ -1,103 +1,137 @@
 import React from 'react';
-import '../styles/contact.css';
+import { motion } from 'framer-motion';
 
 export default function ContactPage() {
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
+
   return (
-    <div className="contact-page-container">
-      <section className="contact-hero py-5 bg-dark text-white text-center">
-        <div className="container">
-          <h1 className="display-4 fw-bold mb-3">Get in <span className="sio-highlight">Touch</span></h1>
-          <p className="lead">We'd love to hear from you. Reach out to us for any inquiries.</p>
+    <main className="pt-20 bg-sio-bg min-h-screen pb-32 font-sans text-sio-text selection:bg-sio-yellow selection:text-sio-dark">
+      {/* Hero Section */}
+      <section className="bg-sio-red border-b-[0.5px] border-sio-red-hover py-32 md:py-40 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070')] bg-cover bg-center opacity-20 z-0 mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-sio-red/95 to-sio-red-hover/90 z-0"></div>
+        <div className="container-custom relative z-10 max-w-4xl mx-auto">
+          <motion.div initial="hidden" animate="visible" variants={fadeInUp}>
+            <span className="text-[0.65rem] uppercase tracking-[0.2em] text-sio-yellow mb-6 block">Inquiries</span>
+            <h1 className="text-5xl md:text-7xl font-heading italic text-white mb-8">
+              Get in Touch
+            </h1>
+            <p className="text-lg text-white/80 font-light max-w-2xl mx-auto leading-relaxed">
+              We welcome your thoughts and inquiries. Reach out to our concierge for feedback, reservations, or bespoke bulk orders.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      <section className="contact-content py-5">
-        <div className="container">
-          <div className="row g-5">
-            <div className="col-lg-5">
-              <div className="contact-info p-4 bg-light rounded shadow-sm h-100">
-                <h3 className="fw-bold mb-4">Contact Information</h3>
-                
-                <div className="d-flex align-items-start mb-4 info-item">
-                  <div className="icon-box bg-white text-danger rounded-circle p-3 me-3 shadow-sm">
-                    <i className="bi bi-geo-alt-fill fs-4"></i>
+      {/* Content Section */}
+      <section className="container-custom -mt-16 relative z-20 max-w-6xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-10">
+          
+          {/* Contact Info Card */}
+          <motion.div 
+            initial="hidden" animate="visible" variants={fadeInUp}
+            className="lg:w-2/5"
+          >
+            <div className="bg-sio-bg border-[0.5px] border-sio-border p-10 md:p-14 h-full shadow-xl">
+              <h3 className="text-3xl font-heading italic text-sio-text mb-10 pb-6 border-b-[0.5px] border-sio-border">Contact Information</h3>
+              
+              <div className="space-y-10">
+                <div className="flex items-start">
+                  <div className="w-10 h-10 border-[0.5px] border-sio-border bg-sio-surface text-sio-yellow rounded-full flex items-center justify-center shrink-0 mr-5">
+                    <i className="bi bi-geo-alt text-sm"></i>
                   </div>
                   <div>
-                    <h5 className="fw-bold mb-1">Our Location</h5>
-                    <p className="text-muted mb-0">123 Food Street, Brgy. Masarap<br />Manila, Philippines 1000</p>
+                    <h5 className="text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Location</h5>
+                    <p className="text-sm font-light text-sio-text leading-relaxed">123 Food Street, Brgy. Masarap<br />Manila, Philippines 1000</p>
                   </div>
                 </div>
                 
-                <div className="d-flex align-items-start mb-4 info-item">
-                  <div className="icon-box bg-white text-danger rounded-circle p-3 me-3 shadow-sm">
-                    <i className="bi bi-envelope-fill fs-4"></i>
+                <div className="flex items-start">
+                  <div className="w-10 h-10 border-[0.5px] border-sio-border bg-sio-surface text-sio-yellow rounded-full flex items-center justify-center shrink-0 mr-5">
+                    <i className="bi bi-envelope text-sm"></i>
                   </div>
                   <div>
-                    <h5 className="fw-bold mb-1">Email Us</h5>
-                    <p className="text-muted mb-0">hello@siosio.com.ph<br />support@siosio.com.ph</p>
+                    <h5 className="text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Email</h5>
+                    <p className="text-sm font-light text-sio-text leading-relaxed">concierge@siosio.com.ph<br />support@siosio.com.ph</p>
                   </div>
                 </div>
                 
-                <div className="d-flex align-items-start mb-4 info-item">
-                  <div className="icon-box bg-white text-danger rounded-circle p-3 me-3 shadow-sm">
-                    <i className="bi bi-telephone-fill fs-4"></i>
+                <div className="flex items-start">
+                  <div className="w-10 h-10 border-[0.5px] border-sio-border bg-sio-surface text-sio-yellow rounded-full flex items-center justify-center shrink-0 mr-5">
+                    <i className="bi bi-telephone text-sm"></i>
                   </div>
                   <div>
-                    <h5 className="fw-bold mb-1">Call Us</h5>
-                    <p className="text-muted mb-0">+63 912 345 6789<br />(02) 8123 4567</p>
+                    <h5 className="text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Phone</h5>
+                    <p className="text-sm font-light text-sio-text leading-relaxed">+63 912 345 6789<br />(02) 8123 4567</p>
                   </div>
                 </div>
+              </div>
 
-                <hr className="my-4" />
-                
-                <h5 className="fw-bold mb-3">Follow Us</h5>
-                <div className="d-flex gap-2 social-buttons">
-                  <a href="#" className="btn btn-outline-primary rounded-circle"><i className="bi bi-facebook"></i></a>
-                  <a href="#" className="btn btn-outline-danger rounded-circle"><i className="bi bi-instagram"></i></a>
-                  <a href="#" className="btn btn-outline-info rounded-circle"><i className="bi bi-twitter"></i></a>
+              <div className="mt-16 pt-10 border-t-[0.5px] border-sio-border">
+                <h5 className="text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-6">Socials</h5>
+                <div className="flex gap-4">
+                  <a href="#" className="w-10 h-10 rounded-full border-[0.5px] border-sio-border bg-sio-surface flex items-center justify-center text-sio-text-muted hover:border-sio-yellow hover:text-sio-yellow transition-colors">
+                    <i className="bi bi-facebook text-sm"></i>
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full border-[0.5px] border-sio-border bg-sio-surface flex items-center justify-center text-sio-text-muted hover:border-sio-yellow hover:text-sio-yellow transition-colors">
+                    <i className="bi bi-instagram text-sm"></i>
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full border-[0.5px] border-sio-border bg-sio-surface flex items-center justify-center text-sio-text-muted hover:border-sio-yellow hover:text-sio-yellow transition-colors">
+                    <i className="bi bi-twitter-x text-sm"></i>
+                  </a>
                 </div>
               </div>
             </div>
-            
-            <div className="col-lg-7">
-              <div className="contact-form-wrapper p-4 p-md-5 bg-white rounded shadow-sm">
-                <h3 className="fw-bold mb-4">Send us a Message</h3>
-                <form>
-                  <div className="row g-3 mb-3">
-                    <div className="col-md-6">
-                      <label className="form-label">First Name</label>
-                      <input type="text" className="form-control" placeholder="Juan" required />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Last Name</label>
-                      <input type="text" className="form-control" placeholder="Dela Cruz" required />
-                    </div>
+          </motion.div>
+          
+          {/* Contact Form Card */}
+          <motion.div 
+            initial="hidden" animate="visible" variants={fadeInUp}
+            className="lg:w-3/5"
+          >
+            <div className="bg-sio-surface border-[0.5px] border-sio-border p-10 md:p-14 shadow-2xl">
+              <h3 className="text-3xl font-heading italic text-sio-text mb-4">Send a Message</h3>
+              <p className="text-xs font-light tracking-wide text-sio-text-muted mb-10">Complete the form below and our concierge will respond promptly.</p>
+              
+              <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">First Name</label>
+                    <input type="text" className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sm text-sio-text transition-colors" placeholder="Juan" required />
                   </div>
-                  
-                  <div className="mb-3">
-                    <label className="form-label">Email Address</label>
-                    <input type="email" className="form-control" placeholder="juan@example.com" required />
+                  <div>
+                    <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Last Name</label>
+                    <input type="text" className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sm text-sio-text transition-colors" placeholder="Dela Cruz" required />
                   </div>
-                  
-                  <div className="mb-3">
-                    <label className="form-label">Subject</label>
-                    <input type="text" className="form-control" placeholder="How can we help you?" required />
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label className="form-label">Message</label>
-                    <textarea className="form-control" rows="5" placeholder="Write your message here..." required></textarea>
-                  </div>
-                  
-                  <button type="submit" className="btn btn-danger px-4 py-2 fw-bold w-100">
-                    Send Message <i className="bi bi-send ms-2"></i>
-                  </button>
-                </form>
-              </div>
+                </div>
+                
+                <div>
+                  <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Email Address</label>
+                  <input type="email" className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sm text-sio-text transition-colors" placeholder="juan@example.com" required />
+                </div>
+                
+                <div>
+                  <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Subject</label>
+                  <input type="text" className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sm text-sio-text transition-colors" placeholder="Inquiry Topic" required />
+                </div>
+                
+                <div>
+                  <label className="block text-[0.65rem] uppercase tracking-widest text-sio-text-muted mb-2">Message</label>
+                  <textarea className="w-full bg-transparent border-b border-sio-border rounded-none px-0 py-3 focus:ring-0 focus:border-sio-yellow text-sm text-sio-text transition-colors resize-none" rows="5" placeholder="Your detailed message..." required></textarea>
+                </div>
+                
+                <button type="submit" className="w-full btn-primary py-4 text-xs uppercase tracking-widest mt-6 flex items-center justify-center gap-3 transition-all hover:bg-black">
+                  Dispatch Message <i className="bi bi-arrow-right"></i>
+                </button>
+              </form>
             </div>
-          </div>
+          </motion.div>
+          
         </div>
       </section>
-    </div>
+    </main>
   );
 }

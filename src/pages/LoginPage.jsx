@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { processInput } from '../utils/formatters';
-import '../styles/auth.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -127,8 +127,6 @@ export default function LoginPage() {
 
         if (signUpError) throw signUpError;
 
-        // Regardless of whether a session is returned or if confirmation is needed,
-        // we show the success modal. The text can be generic.
         setShowSuccessModal(true);
       }
     } catch (err) {
@@ -138,199 +136,178 @@ export default function LoginPage() {
     }
   };
 
-  // Get color based on password strength
   const getStrengthColor = () => {
-    if (passwordStrength.score <= 2) return 'bg-danger';
-    if (passwordStrength.score <= 4) return 'bg-warning';
-    return 'bg-success';
+    if (passwordStrength.score <= 2) return 'bg-red-500';
+    if (passwordStrength.score <= 4) return 'bg-yellow-500';
+    return 'bg-green-500';
   };
 
   return (
-    <section className="auth-section loaded">
-      <div className="bg-pattern"></div>
-      <div className="floating-elements">
-        <div className="floating-siomai"></div>
-        <div className="floating-siopao"></div>
-      </div>
+    <div className="min-h-screen bg-sio-bg flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans text-sio-text selection:bg-sio-yellow selection:text-sio-dark">
+      
+      <div className="absolute inset-0 bg-[url('/images/Homebg.jpg')] bg-cover bg-center opacity-10 z-0 mix-blend-multiply"></div>
 
-      <div className="auth-container">
-        <div className="back-button-container">
-          <Link to="/" className="back-btn">
-            <i className="bi bi-arrow-left me-2"></i>
-            Back to Homepage
+      <div className="max-w-md w-full relative z-10">
+        
+        {/* Navigation */}
+        <div className="mb-10 text-center">
+          <Link to="/" className="text-xs uppercase tracking-widest text-sio-text-muted hover:text-sio-yellow inline-flex items-center transition-colors">
+            <i className="bi bi-arrow-left mr-2"></i> Return to Menu
           </Link>
         </div>
 
-        <div className="brand-section">
-          <h1 className="brand-title">
-            Welcome to <span className="sio-highlight">Sio</span><span className="sio-highlight">Sio</span>
-          </h1>
-          <p className="brand-subtitle">Your favorite Siomai and Siopao store</p>
-        </div>
+        {/* Card */}
+        <motion.div layout className="bg-sio-surface border-[0.5px] border-sio-border overflow-hidden shadow-2xl">
+          
+          <motion.div layout="position" className="p-10 pb-6 text-center border-b-[0.5px] border-sio-border">
+            <h1 className="text-4xl font-heading font-semibold tracking-tight text-sio-text">Sio<span className="text-sio-yellow italic">Sio</span></h1>
+          </motion.div>
 
-        <div className="form-toggle">
-          <button className={`toggle-btn ${isLogin ? 'active' : ''}`} onClick={() => handleToggleForm(true)}>
-            <i className="bi bi-box-arrow-in-right me-2"></i>
-            Login
-          </button>
-          <button className={`toggle-btn ${!isLogin ? 'active' : ''}`} onClick={() => handleToggleForm(false)}>
-            <i className="bi bi-person-plus me-2"></i>
-            Register
-          </button>
-        </div>
-
-        {(error || lockoutMessage) && (
-          <div className="alert alert-danger mb-4">
-            <i className="bi bi-exclamation-triangle-fill me-2"></i>
-            {lockoutMessage || error}
-          </div>
-        )}
-
-        {isLogin ? (
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <div className="form-header">
-              <h2>Welcome Back!</h2>
-              <p>Sign in to access your favorites and orders</p>
+          <motion.div layout className="p-10 pt-8">
+            
+            {/* Toggle */}
+            <div className="flex p-1 mb-10 bg-sio-bg rounded-lg border-[0.5px] border-sio-border">
+              <button 
+                onClick={() => handleToggleForm(true)}
+                className={`flex-1 py-3 rounded-md text-xs uppercase tracking-widest transition-all ${isLogin ? 'bg-white text-sio-yellow shadow-sm font-bold' : 'text-sio-text-muted hover:text-sio-text font-medium'}`}
+              >
+                Sign In
+              </button>
+              <button 
+                onClick={() => handleToggleForm(false)}
+                className={`flex-1 py-3 rounded-md text-xs uppercase tracking-widest transition-all ${!isLogin ? 'bg-white text-sio-yellow shadow-sm font-bold' : 'text-sio-text-muted hover:text-sio-text font-medium'}`}
+              >
+                Register
+              </button>
             </div>
 
-            <div className="form-group">
-              <label className="input-label">Email Address</label>
-              <div className={`input-container ${email ? 'has-value' : ''}`}>
-                <i className="bi bi-envelope input-icon"></i>
-                <input type="text" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!lockoutEndTime} />
-                <label className="floating-label">Email Address</label>
+            {(error || lockoutMessage) && (
+              <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center mb-6 text-sm font-medium">
+                <i className="bi bi-exclamation-triangle-fill mr-3 text-lg"></i>
+                {lockoutMessage || error}
               </div>
-            </div>
+            )}
 
-            <div className="form-group">
-              <label className="input-label">Password</label>
-              <div className={`input-container ${password ? 'has-value' : ''}`}>
-                <i className="bi bi-lock input-icon"></i>
-                <input type={showPassword ? 'text' : 'password'} required value={password} onChange={handlePasswordChange} disabled={!!lockoutEndTime} />
-                <label className="floating-label">Password</label>
-                <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} disabled={!!lockoutEndTime}>
-                  <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
-                </button>
-              </div>
-            </div>
-
-            <div className="forgot-password">
-              <Link to="/forgot-password">
-                <i className="bi bi-key me-2"></i>
-                Forgot Password?
-              </Link>
-            </div>
-
-            <button type="submit" className={`auth-btn ${loading || lockoutEndTime ? 'loading' : ''}`} disabled={loading || !!lockoutEndTime}>
-              <i className="bi bi-box-arrow-in-right me-2"></i>
-              <span style={{ opacity: (loading || lockoutEndTime) ? 0 : 1 }}>Sign In</span>
-              <div className="btn-loader" style={{ display: (loading || lockoutEndTime) ? 'block' : 'none' }}></div>
-            </button>
-          </form>
-        ) : (
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <div className="form-header">
-              <h2>Create Account</h2>
-              <p>Join the SioSio family today!</p>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label className="input-label">First Name</label>
-                <div className={`input-container ${fname ? 'has-value' : ''}`}>
-                  <i className="bi bi-person input-icon"></i>
-                  <input type="text" required value={fname} onChange={(e) => setFname(e.target.value)} />
-                  <label className="floating-label">First Name</label>
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="input-label">Middle Name</label>
-                <div className={`input-container ${mname ? 'has-value' : ''}`}>
-                  <i className="bi bi-person input-icon"></i>
-                  <input type="text" value={mname} onChange={(e) => setMname(e.target.value)} />
-                  <label className="floating-label">Middle Name</label>
-                </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="input-label">Last Name</label>
-              <div className={`input-container ${lname ? 'has-value' : ''}`}>
-                <i className="bi bi-person input-icon"></i>
-                <input type="text" required value={lname} onChange={(e) => setLname(e.target.value)} />
-                <label className="floating-label">Last Name</label>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="input-label">Email Address</label>
-              <div className={`input-container ${email ? 'has-value' : ''}`}>
-                <i className="bi bi-envelope input-icon"></i>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                <label className="floating-label">Email Address</label>
-              </div>
-            </div>
-
-            <div className="form-group mb-2">
-              <label className="input-label">Password</label>
-              <div className={`input-container ${password ? 'has-value' : ''}`}>
-                <i className="bi bi-lock input-icon"></i>
-                <input type={showPassword ? 'text' : 'password'} required value={password} onChange={handlePasswordChange} />
-                <label className="floating-label">Password</label>
-                <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                  <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
-                </button>
-              </div>
-              {/* Password Strength Meter */}
-              {password && (
-                <div className="mt-2">
-                  <div className="progress" style={{ height: '6px' }}>
-                    <div 
-                      className={`progress-bar ${getStrengthColor()}`} 
-                      role="progressbar" 
-                      style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
-                    ></div>
+            <AnimatePresence mode="popLayout" initial={false}>
+              {isLogin ? (
+                <motion.form 
+                  key="login"
+                  initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}
+                  onSubmit={handleSubmit} className="space-y-5 w-full"
+                >
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-sio-text-muted mb-3">Email Address</label>
+                    <div className="relative">
+                      <input type="email" required className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!lockoutEndTime} placeholder="Email" />
+                    </div>
                   </div>
-                  <small className={`d-block mt-1 ${passwordStrength.score === 5 ? 'text-success' : 'text-danger'}`}>
-                    {passwordStrength.feedback}
-                  </small>
-                </div>
-              )}
-            </div>
 
-            <button type="submit" className={`auth-btn mt-3 ${loading ? 'loading' : ''}`} disabled={loading || (password && passwordStrength.score < 5)}>
-              <i className="bi bi-person-plus me-2"></i>
-              <span style={{ opacity: loading ? 0 : 1 }}>Create Account</span>
-              <div className="btn-loader" style={{ display: loading ? 'block' : 'none' }}></div>
-            </button>
-          </form>
-        )}
+                  <div>
+                    <div className="flex justify-between items-end mb-3">
+                      <label className="block text-xs uppercase tracking-widest text-sio-text-muted">Password</label>
+                      <Link to="/forgot-password" className="text-xs uppercase tracking-widest text-sio-yellow hover:text-white transition-colors">Forgot?</Link>
+                    </div>
+                    <div className="relative">
+                      <input type={showPassword ? 'text' : 'password'} required className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 pr-10 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={password} onChange={handlePasswordChange} disabled={!!lockoutEndTime} placeholder="Password" />
+                      <button type="button" className="absolute inset-y-0 right-0 pr-2 flex items-center text-sio-text-muted hover:text-sio-yellow transition-colors" onClick={() => setShowPassword(!showPassword)} disabled={!!lockoutEndTime}>
+                        <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-6">
+                    <button type="submit" className="w-full btn-primary py-4 text-xs uppercase tracking-widest flex justify-center items-center" disabled={loading || !!lockoutEndTime}>
+                      {loading || lockoutEndTime ? <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : "Sign In"}
+                    </button>
+                  </div>
+                </motion.form>
+              ) : (
+                <motion.form 
+                  key="register"
+                  initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}
+                  onSubmit={handleSubmit} className="space-y-5 w-full"
+                >
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs uppercase tracking-widest text-sio-text-muted mb-3">First Name</label>
+                      <input type="text" required className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={fname} onChange={(e) => setFname(e.target.value)} placeholder="Juan" />
+                    </div>
+                    <div>
+                      <label className="block text-xs uppercase tracking-widest text-sio-text-muted mb-3">Middle Name</label>
+                      <input type="text" className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={mname} onChange={(e) => setMname(e.target.value)} placeholder="(Optional)" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-sio-text-muted mb-3">Last Name</label>
+                    <input type="text" required className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={lname} onChange={(e) => setLname(e.target.value)} placeholder="Dela Cruz" />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-sio-text-muted mb-3">Email Address</label>
+                    <input type="email" required className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="juan@example.com" />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-sio-text-muted mb-3">Password</label>
+                    <div className="relative">
+                      <input type={showPassword ? 'text' : 'password'} required className="input-field bg-transparent border-b border-sio-border rounded-none px-0 py-2 pr-10 focus:ring-0 focus:border-sio-yellow text-sio-text text-sm" value={password} onChange={handlePasswordChange} placeholder="Password" />
+                      <button type="button" className="absolute inset-y-0 right-0 pr-2 flex items-center text-sio-text-muted hover:text-sio-yellow transition-colors" onClick={() => setShowPassword(!showPassword)}>
+                        <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
+                      </button>
+                    </div>
+                    {password && (
+                      <div className="mt-2">
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1 overflow-hidden">
+                          <div className={`h-1.5 rounded-full ${getStrengthColor()} transition-all duration-300`} style={{ width: `${(passwordStrength.score / 5) * 100}%` }}></div>
+                        </div>
+                        <p className={`text-xs font-semibold ${passwordStrength.score === 5 ? 'text-green-600' : 'text-red-500'}`}>{passwordStrength.feedback}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-6">
+                    <button type="submit" className="w-full btn-primary py-4 text-xs uppercase tracking-widest flex justify-center items-center" disabled={loading || (password && passwordStrength.score < 5)}>
+                      {loading ? <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : "Create Account"}
+                    </button>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-75" style={{ zIndex: 9999 }}>
-          <div className="card shadow-lg border-0 text-center p-4 animate__animated animate__zoomIn" style={{ maxWidth: '400px', borderRadius: '1rem' }}>
-            <div className="card-body">
-              <div className="mb-4">
-                <i className="bi bi-check-circle-fill text-success" style={{ fontSize: '4rem' }}></i>
+      <AnimatePresence>
+        {showSuccessModal && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-sio-surface rounded-2xl shadow-2xl border-[0.5px] border-sio-border p-8 max-w-sm w-full text-center"
+            >
+              <div className="w-20 h-20 bg-sio-bg text-sio-yellow rounded-full flex items-center justify-center mx-auto mb-6 border-[0.5px] border-sio-yellow">
+                <i className="bi bi-check-lg text-4xl"></i>
               </div>
-              <h3 className="fw-bold mb-3">Account Created!</h3>
-              <p className="text-muted mb-4">Welcome to the SioSio family. Your account has been successfully created. If email confirmation is enabled, please check your inbox before logging in.</p>
+              <h3 className="text-2xl font-bold text-sio-text mb-3">Account Created!</h3>
+              <p className="text-sio-text-muted mb-8 text-sm font-light">Welcome to the SioSio family. Your account has been successfully created.</p>
               <button
-                className="btn btn-danger btn-lg w-100 rounded-pill fw-bold"
+                className="w-full btn-primary py-3 font-bold"
                 onClick={() => {
                   setShowSuccessModal(false);
                   setIsLogin(true);
                   setPassword('');
                 }}
               >
-                Go to Login <i className="bi bi-arrow-right ms-2"></i>
+                Go to Login
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </section>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

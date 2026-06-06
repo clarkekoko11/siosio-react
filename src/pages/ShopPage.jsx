@@ -3,7 +3,6 @@ import { CartContext } from '../contexts/CartContext';
 import { AuthContext } from '../contexts/AuthContext';
 import { useProducts } from '../hooks/useProducts';
 import { useNavigate } from 'react-router-dom';
-import '../styles/products.css';
 
 export default function ShopPage() {
   const { addToCart } = useContext(CartContext);
@@ -26,32 +25,41 @@ export default function ShopPage() {
   const categories = [...new Set(activeProducts.map(p => p.category))];
 
   const ProductCard = ({ product }) => (
-    <div className="col-lg-3 col-md-4 col-sm-6 mb-4">
-      <div className="card h-100 shadow-sm product-item border-0">
-        <div className="card-img-top overflow-hidden bg-light" style={{ height: '220px' }}>
-          <img 
-            src={product.image || 'https://via.placeholder.com/400x300?text=No+Image'} 
-            alt={product.name} 
-            className="img-fluid w-100 h-100" 
-            style={{ objectFit: 'cover' }} 
-            onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found' }}
-          />
-        </div>
-        <div className="card-body d-flex flex-column">
-          <h5 className="card-title fw-bold fs-6">
-            {product.name}
-          </h5>
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <button className="btn btn-outline-danger favorite-btn border-0 p-1" onClick={handleFavoriteClick}>
-              <i className="bi bi-heart"></i>
-            </button>
-            <p className="text-danger fw-bold fs-5 mb-0">₱{product.price.toFixed(2)}</p>
-          </div>
-          <p className="card-text text-muted small flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {product.description}
+    <div className="bg-white rounded-xl overflow-hidden flex flex-col h-full group border border-gray-100 hover:border-sio-yellow transition-all duration-300 hover:shadow-xl">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 mb-5">
+        <div className="absolute inset-0 bg-sio-red/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 mix-blend-multiply"></div>
+        <img 
+          src={product.image || 'https://via.placeholder.com/400x500?text=No+Image'} 
+          alt={product.name} 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+          onError={(e) => { e.target.src = 'https://via.placeholder.com/400x500?text=Image+Not+Found' }}
+        />
+        <button 
+          onClick={handleFavoriteClick}
+          className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-sio-red hover:bg-white shadow-sm transition-all duration-300 z-20"
+        >
+          <i className="bi bi-heart"></i>
+        </button>
+      </div>
+      
+      <div className="flex flex-col flex-grow px-5 pb-5 text-center">
+        <h5 className="font-sans font-black text-xl text-sio-text mb-2 group-hover:text-sio-yellow transition-colors">
+          {product.name}
+        </h5>
+        
+        <p className="text-gray-500 text-sm mb-5 flex-grow font-medium leading-relaxed line-clamp-2">
+          {product.description}
+        </p>
+
+        <div className="flex flex-col items-center gap-4 mt-auto">
+          <p className="text-sio-yellow font-sans font-black text-xl tracking-wide">
+            ₱{product.price.toFixed(2)}
           </p>
-          <button className="btn btn-danger w-100 mt-2 fw-bold" onClick={() => addToCart(product)}>
-            <i className="bi bi-cart-plus me-2"></i>Add to Cart
+          <button 
+            onClick={() => addToCart(product)}
+            className="w-full py-3.5 bg-sio-red text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-sio-red-hover shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <i className="bi bi-bag"></i> Add to Cart
           </button>
         </div>
       </div>
@@ -59,43 +67,58 @@ export default function ShopPage() {
   );
 
   return (
-    <>
-      <section className="page-header bg-dark text-white py-5 text-center">
-        <div className="container">
-          <h1 className="display-4 fw-bold mb-3">Our Menu</h1>
-          <p className="lead">Choose from our delicious selection of authentic Filipino favorites</p>
+    <main className="pt-24 bg-sio-surface min-h-screen pb-32 font-sans text-sio-text selection:bg-sio-yellow selection:text-sio-dark">
+      {/* Header Section */}
+      <section className="relative bg-sio-red py-32 text-center overflow-hidden border-b-[0.5px] border-sio-red-hover">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1563245372-f21724e3856d?q=80&w=2129')] bg-cover bg-center opacity-20 z-0 mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-sio-red/95 to-sio-red-hover/90 z-0"></div>
+        <div className="container-custom relative z-10">
+          <span className="inline-block text-xs uppercase tracking-[0.3em] text-sio-yellow font-semibold mb-6">
+            Culinary Collection
+          </span>
+          <h1 className="text-5xl md:text-7xl font-heading text-white italic mb-6">Our Menu</h1>
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-light leading-relaxed">
+            Choose from our exquisite selection of authentic Asian favorites, handcrafted fresh just for you.
+          </p>
         </div>
       </section>
 
       {loading ? (
-        <div className="text-center py-5 my-5">
-          <div className="spinner-border text-danger" role="status"></div>
+        <div className="flex justify-center items-center py-32">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sio-yellow"></div>
         </div>
       ) : (
-        <div className="container py-5">
+        <div className="container-custom pt-24">
           {categories.length === 0 ? (
-            <div className="text-center py-5">
-              <i className="bi bi-shop display-1 text-muted mb-3 d-block"></i>
-              <h3 className="text-muted">No products available at the moment.</h3>
-              <p className="text-muted">Please check back later!</p>
+            <div className="text-center py-32 bg-sio-bg border-[0.5px] border-sio-border">
+              <i className="bi bi-shop text-4xl text-gray-600 mb-6 block"></i>
+              <h3 className="text-2xl font-heading text-gray-300 italic mb-4">No culinary offerings available right now</h3>
+              <p className="text-sio-text-muted font-light">Our chefs are preparing something special. Please check back later.</p>
             </div>
           ) : (
-            categories.map((category, index) => {
-              const categoryProducts = activeProducts.filter(p => p.category === category);
-              return (
-                <div key={category} className={`mb-5 pb-4 ${index !== categories.length - 1 ? 'border-bottom' : ''}`}>
-                  <h2 className="display-6 fw-bold text-capitalize mb-4">
-                    {category} <span className="text-danger fs-3">•</span>
-                  </h2>
-                  <div className="row justify-content-center justify-content-md-start">
-                    {categoryProducts.map(product => <ProductCard key={product.id} product={product} />)}
+            <div className="space-y-32">
+              {categories.map((category) => {
+                const categoryProducts = activeProducts.filter(p => p.category === category);
+                return (
+                  <div key={category} id={`${category}-section`} className="scroll-mt-32">
+                    <div className="flex flex-col items-center text-center mb-16">
+                      <span className="text-xs uppercase tracking-[0.2em] text-sio-text-muted mb-2">Category</span>
+                      <h2 className="text-4xl font-heading text-sio-text italic capitalize">{category}</h2>
+                      <div className="w-12 h-[1px] bg-sio-yellow mt-6"></div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+                      {categoryProducts.map(product => (
+                        <ProductCard key={product.id} product={product} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </div>
           )}
         </div>
       )}
-    </>
+    </main>
   );
 }
